@@ -4,7 +4,7 @@
 CC=g++ -std=c++0x
 CFLAGS= -O0 -g -Wall -Wextra
 LDFLAGS=
-SOURCES=huffman_trie.cpp
+SOURCES=huffman_trie.cpp charlist.cpp mcp.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 BINARY=huffman_compression
 

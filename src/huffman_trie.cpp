@@ -1,53 +1,12 @@
 /*
 * By Jesse Blagg and Ryan Morris
 * Huffman Compression program
+* for CSCI 480
+* September 2014
 */
-#include <limits.h>
-#include <iostream>
-#include <stack>
 
-using namespace std;
+#include "../headers/huffman_trie.h"
 
-struct Enc_node
-{	
-	bool active;
-	unsigned long int encoding;
-	int length;
-	Enc_node* buckets;
-};
-
-struct Trie_node
-{
-	bool is_character;	
-	char character;
-	unsigned long int val;
-	Trie_node* left;
-	Trie_node* right;
-};
-
-class Trie
-{
-	private:
-
-	Enc_node enc_table[CHAR_MAX];
-	Trie_node* root;
-	unsigned long int char_count;
-	unsigned long int node_count;
-	void count_traverse(Trie_node* root);
-	void delete_buckets(Enc_node* bkt);
-	void delete_trie(Trie_node* root);
-	void enc_traverse(Trie_node* Root, stack<int> huffman, int code_length);
-	void node_traverse(Trie_node* root);
-	
-	public:
-	
-	Trie();
-	unsigned long int character_count();
-	void get_encoding();
-	unsigned long int size_of_trie();
-	void insert_trie(const char Character, int count);
-	~Trie();
-};
 
 void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**
 {
@@ -102,14 +61,14 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman, int code_length)
 			huffman.pop(); //pop it off the stack
 			if(code_length < 64)
 			{
-				code = code << 1; //bitshift whatever is in the buffer to the left
-				code = code | direction; //Add the least significant bit to 
+				code = code << 1; //bitshift whatever is in the buffer to the left by 1 bit
+				code = code | direction; //Add the least significant bit to the buffer 
 			}
 			else
 			{
 				//FIXME
 			}
-			//bitshift anyhting in code to the lefth
+			//bitshift anyhting in code to the left
 			code = code | direction; //bitwise and it with code
 		}
 	}
@@ -170,13 +129,4 @@ Trie::~Trie() //Destructor deletes entire trie
 	{
 		delete_buckets(enc_table[i].buckets); 
 	}
-}
-
-int main(int argc, char** argv)
-{
-	Trie test;
-	cout << "Constructed and inited\n";
-	cout << "Nodes: " << test.size_of_trie() << endl;
-	cout << "Characters: " << test.character_count() << endl;
-	return 0;
 }

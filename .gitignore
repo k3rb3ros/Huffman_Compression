@@ -2,6 +2,10 @@
 *.slo
 *.lo
 *.o
+*.exe
+
+# Compiled elf binary
+huffman_compression
 
 # Compiled Dynamic libraries
 *.so
