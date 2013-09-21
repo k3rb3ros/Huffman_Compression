@@ -4,10 +4,13 @@
 */
 #include <limits.h>
 #include <iostream>
+#include <stack>
+
 using namespace std;
 
 struct Enc_node
-{
+{	
+	bool active;
 	unsigned long int encoding;
 	int length;
 	Enc_node* buckets;
@@ -30,26 +33,21 @@ class Trie
 	Trie_node* root;
 	unsigned long int char_count;
 	unsigned long int node_count;
-	void char_traverse(Trie_node* root, const char lookup);
 	void count_traverse(Trie_node* root);
 	void delete_buckets(Enc_node* bkt);
 	void delete_trie(Trie_node* root);
+	void enc_traverse(Trie_node* Root, stack<int> huffman, int code_length);
 	void node_traverse(Trie_node* root);
 	
 	public:
 	
 	Trie();
 	unsigned long int character_count();
-	unsigned long int get_encoding(const char Character);
+	void get_encoding();
 	unsigned long int size_of_trie();
 	void insert_trie(const char Character, int count);
 	~Trie();
 };
-
-void Trie::char_traverse(Trie_node* root, const char lookup)//Recursively traverse through the Trie to the character passed into the function encode a bit string based on the traversal path
-{
-	//FIXME
-}
 
 void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**
 {
@@ -76,6 +74,47 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 	Root = NULL; //set the pointer to Null to prevent any confusion that Root has been erased
 }
 
+void Trie::enc_traverse(Trie_node* Root, stack<int> huffman, int code_length)
+{
+	bool is_char = false;
+	char ch = 0;
+	unsigned long int direction = 0;
+	unsigned long int code = 0;
+	if(Root == NULL) return;
+	is_char = Root -> is_character;
+	ch = Root -> character;
+	if(Root -> left != NULL)
+	{
+		huffman.push(0);
+		enc_traverse(Root -> left, huffman, code_length++);
+	}
+	if(Root -> right != NULL)
+	{
+		huffman.push(1);
+		enc_traverse(Root -> right, huffman, code_length++);
+	}
+	if(is_char == true)//if node represents a character in our trie
+	{
+		enc_table[ch].active = true; //activate that node in the table 
+		while(!huffman.empty())
+		{
+			direction = huffman.top(); //get the 0 or 1 on the top of the stack
+			huffman.pop(); //pop it off the stack
+			if(code_length < 64)
+			{
+				code = code << 1; //bitshift whatever is in the buffer to the left
+				code = code | direction; //Add the least significant bit to 
+			}
+			else
+			{
+				//FIXME
+			}
+			//bitshift anyhting in code to the lefth
+			code = code | direction; //bitwise and it with code
+		}
+	}
+
+}
 void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing in the Trie
 {
 	if(Root == NULL) return; //terminate recursion
@@ -98,8 +137,9 @@ Trie::Trie() //Constructor inits root node
 	root -> val = 0;
 	root -> left = NULL;
 	root -> right = NULL;
-	for(int i=0; i<CHAR_MAX; i++)
+	for(int i=0; i<CHAR_MAX; i++) //Initialize the encoding table
 	{
+		enc_table[i].active = false;
 		enc_table[i].encoding = 0;
 		enc_table[i].length = 0;
 		enc_table[i].buckets = NULL; 
@@ -111,12 +151,10 @@ unsigned long int Trie::character_count() //Recursively count the number of char
 	return char_count;
 }
 
-unsigned long int Trie::get_encoding(const char Character) //Recursively traverse to the character creating the bitstring encoding based on left and right traversals
+void Trie::get_encoding() //Recursively traverse to the character creating the bitstring encoding based on left and right traversals
 {	
-	unsigned long int encode_buff = 0;
-	unsigned long int* enc = &encode_buff;
-		
-	return 0;
+	stack<int> branch;
+	enc_traverse(root, branch, 0);	
 }
 
 unsigned long int Trie::size_of_trie() //Recursively count the number of nodes i the trie **FOR DEBUGGING**
@@ -130,7 +168,7 @@ Trie::~Trie() //Destructor deletes entire trie
 	delete_trie(root);
 	for(int i=0; i<CHAR_MAX; i++) //Recursively delete any buckets that were allocated on the heap
 	{
-		delete_buckets(enc_table[i].buckets);
+		delete_buckets(enc_table[i].buckets); 
 	}
 }
 
