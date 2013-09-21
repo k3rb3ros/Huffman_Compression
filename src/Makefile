@@ -16,4 +16,4 @@ $(BINARY): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $@
 
 clean: 
-	rm -rfv $(BINARY) $(OBJECTS)
+	rm -fv $(BINARY) $(OBJECTS)

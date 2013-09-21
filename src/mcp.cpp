@@ -13,14 +13,14 @@ int main(int argv, char **argc){
 	
 	CharList c;
 	string fname = "../text/us_constitution.txt";
-	Trie huffman;
+	//Trie huffman;
 
 	c.bufferFile(fname);	
     c.populateTable();
-
-	cout << "Constructed and inited\n";
-	cout << "Nodes: " << huffman.size_of_trie() << endl;
-	cout << "Characters: " << huffman.character_count() << endl;
+	c.showCharCount();
+	//cout << "Constructed and inited\n";
+	//cout << "Nodes: " << huffman.size_of_trie() << endl;
+	//cout << "Characters: " << huffman.character_count() << endl;
 	
 	return 0;
 }

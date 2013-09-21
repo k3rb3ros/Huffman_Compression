@@ -10,10 +10,20 @@
 
 #include "headers.h"
 
-struct CharNode //Structure used for count table
+struct CharBucket
 {
-	unsigned long int count;
-	char char_in_text;
+	unsigned long int encoding;
+	CharBucket* buckets;
+};
+
+struct CharNode //Structure used for CharTable will be shared with Trie class
+{
+	bool active;
+	//char char_in_text;	
+	CharBucket* buckets;
+	unsigned long int encodeLength;	
+	unsigned long int encoding;
+	unsigned long int occurrence;
 };
 
 class CharList
@@ -23,13 +33,18 @@ class CharList
 	char* buffer;
 	int charOccurrence;
 	unsigned long int len;
-	vector<CharNode*> frequencyTable; //Added to class to be compliant with Object Oriented methodology
+	CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
+	//vector<CharNode*> frequencyTable; //Added to class to be compliant with Object Oriented methodology
+	void delBuckets(CharBucket* buckets);	
 	
 	public:
 
+	CharList(); //default constructor
 	void bufferFile(string fname); //Name changed so that it makes more sense
 	bool isFound(char a);
-	void populateTable();			
+	void populateTable();
+	void showCharCount();				
+	~CharList(); //Destructor
 };
 
 #endif

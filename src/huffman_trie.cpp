@@ -7,7 +7,6 @@
 
 #include "../headers/huffman_trie.h"
 
-
 void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**
 {
 	if(Root == NULL || Root -> is_character == true) return; //terminate if we go outside the trie or we advance into the character section
