@@ -26,9 +26,9 @@ class Trie
 	void count_traverse(Trie_node* root);
 	void delete_trie(Trie_node* root);
 	void node_traverse(Trie_node* root);
-	
+
 	public:
-	
+
 	Trie();
 	unsigned long int character_count();
 	unsigned long int get_encoding(const char Character);
@@ -82,7 +82,7 @@ unsigned long int Trie::get_encoding(const char Character) //Recursively travers
 {	
 	unsigned long int encode_buff = 0;
 	unsigned long int* enc = &encode_buff;
-		
+
 	return 0;
 }
 
@@ -108,11 +108,11 @@ Trie::~Trie() //Destructor deletes entire trie
 	delete_trie(root);
 }
 
-int main(int argc, char** argv)
+/*int main(int argc, char** argv)
 {
 	Trie test;
 	cout << "Constructed and inited\n";
 	cout << "Nodes: " << test.size_of_trie() << endl;
 	cout << "Characters: " << test.character_count() << endl;
 	return 0;
-}
+} */

@@ -7,11 +7,15 @@
 #include <vector>
 #include "charlist.h"
 #include "huffman_trie.cpp"
+ 
 int main(int argv, char **argc){
 	string fname= "constitution.txt";
 	CharList c;
-	c.insert(fname);	
 	Trie test;
+	vector<CharNode*> frequencyTable;
+	c.initBuffer(fname);	
+    c.populateTable(frequencyTable);
+
 	cout << "Constructed and inited\n";
 	cout << "Nodes: " << test.size_of_trie() << endl;
 	cout << "Characters: " << test.character_count() << endl;
