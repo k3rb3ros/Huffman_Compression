@@ -19,6 +19,30 @@ CharList::CharList()
 		charTable[i].encoding = 0;
 		charTable[i].occurrence = 0;
 		charTable[i].buckets = NULL;
+		charSort[i] = (char*)&charTable[i]; //Initialize charSort to point to every index in charTable
+		//cout << "Addr " << i+1 << " : " << &charSort[i] << ", ";
+	}
+}
+
+void CharList::sortTable()
+{
+	//temp = ((CharNode*) &*(charSort[i])); //don't fuck with this
+	cout << endl;
+	for(int i=0; i<CHAR_MAX; i++)
+	{
+		for(int j=0; j<CHAR_MAX; j++)
+		{
+			if(((CharNode*) &*(charSort[j])) < ((CharNode*) &*(charSort[j+1])))
+			{
+				//cout << "|" << ((CharNode*) &*(charSort[j])) << "| |" << ((CharNode*) &*(charSort[j+1])) << ", ";
+				swap(charSort[j], charSort[j+1]);
+			}
+		}
+	}
+	cout << endl;
+	for(int l=0; l<CHAR_MAX; l++)
+	{
+		cout << "|" << ((CharNode*) &*(charSort[l]))->occurrence << "| , ";
 	}
 }
 
@@ -27,6 +51,14 @@ void CharList::delBuckets(CharBucket* buckets) //lots of deleting bucket action 
 	if(buckets == NULL) return;
 	delBuckets(buckets -> buckets);
 	delete buckets; 	
+}
+
+void CharList::swap(char* a, char* b)
+{
+	char* temp = NULL;
+	temp = a;
+	a = b;
+	b = temp;
 }
 
 void CharList::bufferFile(string fname)
@@ -109,7 +141,7 @@ void CharList::showCharCount()
 	{
 		if(charTable[i].active == true)
 		{
-			cout << "\"" << i << "\": " << charTable[i].occurrence << ", ";
+			cout << "\"" << i << "\"" << charTable[i].occurrence << ", ";
 		}
 	}
 }

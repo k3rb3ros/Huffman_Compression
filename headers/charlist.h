@@ -34,16 +34,18 @@ class CharList
 	int charOccurrence;
 	unsigned long int len;
 	CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
+	char* charSort[CHAR_MAX];
 	//vector<CharNode*> frequencyTable; //Added to class to be compliant with Object Oriented methodology
 	void delBuckets(CharBucket* buckets);	
-	
+	void swap(char* a, char* b);
 	public:
 
 	CharList(); //default constructor
 	void bufferFile(string fname); //Name changed so that it makes more sense
 	bool isFound(char a);
 	void populateTable();
-	void showCharCount();				
+	void showCharCount();
+	void sortTable();
 	~CharList(); //Destructor
 };
 

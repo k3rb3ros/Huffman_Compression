@@ -18,6 +18,7 @@ int main(int argv, char **argc){
 	c.bufferFile(fname);	
     c.populateTable();
 	c.showCharCount();
+	c.sortTable();
 	//cout << "Constructed and inited\n";
 	//cout << "Nodes: " << huffman.size_of_trie() << endl;
 	//cout << "Characters: " << huffman.character_count() << endl;
