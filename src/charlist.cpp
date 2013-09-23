@@ -26,22 +26,21 @@ CharList::CharList()
 
 void CharList::sortTable()
 {
-	//temp = ((CharNode*) &*(charSort[i])); //don't fuck with this
 	cout << endl;
 	for(int i=0; i<CHAR_MAX; i++)
 	{
 		for(int j=0; j<CHAR_MAX-1; j++)
 		{
-			if((((CharNode*) &*(charSort[j])))->occurrence < (((CharNode*) &*(charSort[j+1])))->occurrence)
+			if((((CharNode*) &*(charSort[j])))->occurrence > (((CharNode*) &*(charSort[j+1])))->occurrence)
 			{
 				swap(charSort[j], charSort[j+1]);
 			}
 		}
 	}
 	cout << endl;
-	for(int l=0; l<CHAR_MAX; l++)
+	for(char l=0; l<CHAR_MAX; l++)
 	{
-		cout << "|" << ((CharNode*) &*(charSort[l]))->occurrence << "| , ";
+		if(((CharNode*) &*(charSort[l]))->occurrence > 0) cout << "|\"" << l << "\":" << ((CharNode*) &*(charSort[l]))->occurrence << "| , ";
 	}
 }
 
