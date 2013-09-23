@@ -35,7 +35,6 @@ class CharList
 	unsigned long int len;
 	CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
 	char* charSort[CHAR_MAX];
-	//vector<CharNode*> frequencyTable; //Added to class to be compliant with Object Oriented methodology
 	void delBuckets(CharBucket* buckets);	
 	void swap(char* &a, char* &b);
 	public:

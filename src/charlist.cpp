@@ -34,7 +34,6 @@ void CharList::sortTable()
 		{
 			if((((CharNode*) &*(charSort[j])))->occurrence < (((CharNode*) &*(charSort[j+1])))->occurrence)
 			{
-				//cout << "|" << ((CharNode*) &*(charSort[j])) << "| |" << ((CharNode*) &*(charSort[j+1])) << ", ";
 				swap(charSort[j], charSort[j+1]);
 			}
 		}
@@ -46,7 +45,7 @@ void CharList::sortTable()
 	}
 }
 
-void CharList::delBuckets(CharBucket* buckets) //lots of deleting bucket action up in here!
+void CharList::delBuckets(CharBucket* buckets) //recursively delete any buckets that have been added to charTable
 {
 	if(buckets == NULL) return;
 	delBuckets(buckets -> buckets);
@@ -64,7 +63,6 @@ void CharList::swap(char* &a, char* &b)
 void CharList::bufferFile(string fname)
 {
 		unsigned int i = 0;
-		//ofstream out("out.txt"); uneeded now that we know it buffers correctly	    
 		ifstream in(fname.c_str(), std::ios::in | std::ios::binary);
 		
 		if (in.good())
@@ -73,18 +71,14 @@ void CharList::bufferFile(string fname)
 			len = in.tellg(); //Get the length of the file
 			buffer = new char[len+1];
 			buffer[len] = 0; //nullpad the string
-			//len = len -1; //Subtract one for zero based arrays
 			in.seekg(0, in.beg); //Reset stream to beginning
 			in >> noskipws; //tell fstream not to ignore whitespace
 			
 			while(i!=len)
 			{
 				in >> buffer[i];
-				//out << buffer[i];
 				i++;
 			}			
-			//in.close();
-			//cout << "File contents: " << buffer << endl;
 			cout << "Read " << len << " characters... ";
 			// read data as a block:
 		
@@ -111,7 +105,6 @@ bool CharList::isFound(char a)
 void CharList::populateTable()
 {
 	char ch = 0;
-	//CharNode* temp = NULL;	
 	if(buffer != NULL)
 	{
 		for(unsigned int i=0; i<len; i++)
@@ -123,15 +116,9 @@ void CharList::populateTable()
 				charTable[ch].occurrence = 1; //set occurance to 1
 			}
 			else charTable[ch].occurrence ++;
-	}
-		
-		//temp = new CharNode;
-		//temp -> char_in_text = buffer[i];
-		//temp -> count = 0;
-		//frequencyTable.push_back(temp);
-		//temp = NULL;
-	}
+		}
 		cout << "Frequency Table succesfully populated" << endl;
+	}
 }
 
 void CharList::showCharCount()
