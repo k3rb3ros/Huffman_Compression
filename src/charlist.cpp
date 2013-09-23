@@ -30,9 +30,9 @@ void CharList::sortTable()
 	cout << endl;
 	for(int i=0; i<CHAR_MAX; i++)
 	{
-		for(int j=0; j<CHAR_MAX; j++)
+		for(int j=0; j<CHAR_MAX-1; j++)
 		{
-			if(((CharNode*) &*(charSort[j])) < ((CharNode*) &*(charSort[j+1])))
+			if((((CharNode*) &*(charSort[j])))->occurrence < (((CharNode*) &*(charSort[j+1])))->occurrence)
 			{
 				//cout << "|" << ((CharNode*) &*(charSort[j])) << "| |" << ((CharNode*) &*(charSort[j+1])) << ", ";
 				swap(charSort[j], charSort[j+1]);
@@ -53,7 +53,7 @@ void CharList::delBuckets(CharBucket* buckets) //lots of deleting bucket action 
 	delete buckets; 	
 }
 
-void CharList::swap(char* a, char* b)
+void CharList::swap(char* &a, char* &b)
 {
 	char* temp = NULL;
 	temp = a;

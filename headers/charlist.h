@@ -37,7 +37,7 @@ class CharList
 	char* charSort[CHAR_MAX];
 	//vector<CharNode*> frequencyTable; //Added to class to be compliant with Object Oriented methodology
 	void delBuckets(CharBucket* buckets);	
-	void swap(char* a, char* b);
+	void swap(char* &a, char* &b);
 	public:
 
 	CharList(); //default constructor

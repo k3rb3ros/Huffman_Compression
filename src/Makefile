@@ -6,7 +6,7 @@ CFLAGS= -O0 -g -Wall -Wextra
 LDFLAGS=
 SOURCES=huffman_trie.cpp charlist.cpp mcp.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-BINARY=huffman_compression
+BINARY=mcp
 
 all: $(BINARY) $(OBJECTS)
 .cpp.o:
