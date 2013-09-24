@@ -18,10 +18,16 @@ class CharList
 	char* buffer;
 	int charOccurrence;
 	unsigned long int len;
-	CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
-	char* charSort[CHAR_MAX];
+	//CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
+	//char* charSort[CHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
 	void delBuckets(CharBucket* buckets);	
 	void swap(char* &a, char* &b);
+	
+	protected:
+	
+	CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
+	char* charSort[CHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
+
 	public:
 
 	CharList(); //default constructor

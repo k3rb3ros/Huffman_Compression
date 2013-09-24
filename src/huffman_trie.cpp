@@ -7,21 +7,48 @@
 
 #include "../headers/huffman_trie.h"
 
-void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**
+Trie_node* Trie::insert_node(Trie_node* Root, char character, unsigned long int val)
 {
-	if(Root == NULL || Root -> is_character == true) return; //terminate if we go outside the trie or we advance into the character section
-	if(Root -> right != NULL) count_traverse(Root -> right);
-	if(Root -> left != NULL) count_traverse(Root -> left);
-	char_count += Root -> val; 
+	Trie_node* knew_node = NULL;
+	Trie_node* knew_root = NULL;
+	unsigned long int sum = 0;
+	if(Root == NULL) return Root;
+	
+	sum = sum_nodes(Root, 0); //Sum all the weights of the current root node
+
+	knew_node = new Trie_node; //allocate storage for the new node and set the values
+	knew_node -> is_character = true;
+	knew_node -> character = character;
+	knew_node -> val = val;
+	knew_node -> left = NULL;
+	knew_node -> right = NULL;
+	
+	knew_root = new Trie_node;
+	knew_root -> is_character = false;
+	knew_root -> character = 0;
+	knew_root -> val = sum + val;	
+	
+	if(sum > val) //insert new node to the left
+	{
+		knew_root -> left = knew_node;
+		knew_root -> right = Root;
+	}
+	else// insert new node to the right
+	{
+		knew_root -> left = Root;
+		knew_root -> right = knew_node;
+	}
+	
+	return knew_root; //knew_root;
 }
 
-/*void Trie::delete_buckets(Enc_node* bkt)
+void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**
 {
-	if(bkt == NULL) return;
-	delete_buckets(bkt -> buckets);
-	bkt -> buckets = NULL;
-	delete bkt; 
-}*/
+	if(Root == NULL) return; //terminate if we go outside the trie or we advance into the character section
+	if(Root -> right != NULL) count_traverse(Root -> right);
+	if(Root -> left != NULL) count_traverse(Root -> left);
+	if(Root -> is_character == true) char_count += Root -> val; 
+}
 
 void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 {
@@ -73,17 +100,22 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman, int code_length)
 	}
 
 }
+
 void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing in the Trie
 {
 	if(Root == NULL) return; //terminate recursion
-	else if(Root -> left == NULL && Root -> right == NULL)
-	{
-		node_count ++;
-		return; //then only Root node exists so it is the only node
-	}
-	if(Root -> right != NULL) Root = Root -> right; //recursively traverse to the right node
-	if(Root -> left != NULL) Root = Root -> left; //recursively traverse to the left node
+	if(Root -> right != NULL) node_traverse(Root -> right); //recursively traverse to the right node
+	if(Root -> left != NULL) node_traverse(Root -> left); //recursively traverse to the left node
 	node_count ++;
+}
+
+unsigned long int Trie::sum_nodes(Trie_node* Root, unsigned long int sum)
+{	
+	if(Root == NULL) return sum;
+	sum += sum_nodes(Root->left, sum);
+	sum += sum_nodes(Root->right, sum);
+	sum += Root -> val;
+	return sum;
 }
 
 Trie::Trie() //Constructor inits root node
@@ -109,16 +141,31 @@ unsigned long int Trie::character_count() //Recursively count the number of char
 	return char_count;
 }
 
-void Trie::get_encoding() //Recursively traverse to the character creating the bitstring encoding based on left and right traversals
-{	
-	stack<int> branch;
-	enc_traverse(root, branch, 0);	
-}
-
 unsigned long int Trie::size_of_trie() //Recursively count the number of nodes i the trie **FOR DEBUGGING**
 {
 	node_traverse(root);
 	return node_count;
+}
+
+void Trie::populate_trie()
+{
+	char character = 0;
+	unsigned long int occurrence = 0;
+	for(char i=0; i<CHAR_MAX; i++)
+	{
+		character = (((CharNode*) &*(charSort[i]))->character);
+		occurrence = (((CharNode*) &*(charSort[i]))->occurrence);
+		if(occurrence > 0)
+		{
+			root = insert_node(root, character, occurrence);
+		}
+	}
+}
+
+void Trie::get_encoding() //Recursively traverse to the character creating the bitstring encoding based on left and right traversals
+{	
+	stack<int> branch;
+	enc_traverse(root, branch, 0);	
 }
 
 Trie::~Trie() //Destructor deletes entire trie

@@ -32,7 +32,7 @@ void CharList::sortTable()
 	{
 		for(int j=0; j<CHAR_MAX-1; j++)
 		{
-			if((((CharNode*) &*(charSort[j])))->occurrence > (((CharNode*) &*(charSort[j+1])))->occurrence)
+		if((((CharNode*) &*(charSort[j])))->occurrence > (((CharNode*) &*(charSort[j+1])))->occurrence)
 			{
 				swap(charSort[j], charSort[j+1]);
 			}
@@ -96,7 +96,6 @@ void CharList::bufferFile(string fname)
 			cerr << " File Not Found! " << endl;  
 			return;
 		}
-
 		cout << endl << " length is = " << len << endl;
 }
 

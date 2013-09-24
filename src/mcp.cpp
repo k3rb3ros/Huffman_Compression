@@ -20,6 +20,7 @@ int main(int argv, char **argc)
 	huffman.populateTable();
 	huffman.showCharCount();
 	huffman.sortTable();
+	huffman.populate_trie();
 	cout << endl;
 	cout << "Nodes: " << huffman.size_of_trie() << endl;
 	cout << "Characters: " << huffman.character_count() << endl;
