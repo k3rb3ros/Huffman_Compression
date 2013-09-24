@@ -9,22 +9,7 @@
 #define CHARLIST_H
 
 #include "headers.h"
-
-struct CharBucket
-{
-	unsigned long int encoding;
-	CharBucket* buckets;
-};
-
-struct CharNode //Structure used for CharTable will be shared with Trie class
-{
-	bool active;
-	//char char_in_text;	
-	CharBucket* buckets;
-	unsigned long int encodeLength;	
-	unsigned long int encoding;
-	unsigned long int occurrence;
-};
+#include "mcp.h"
 
 class CharList
 {
@@ -41,7 +26,6 @@ class CharList
 
 	CharList(); //default constructor
 	void bufferFile(string fname); //Name changed so that it makes more sense
-	bool isFound(char a);
 	void populateTable();
 	void showCharCount();
 	void sortTable();

@@ -12,9 +12,10 @@ CharList::CharList()
 	buffer = NULL;
 	charOccurrence = -1;
 	len = 0;
-	for(int i=0; i<CHAR_MAX; i++)
+	for(char i=0; i<CHAR_MAX; i++)
 	{
 		charTable[i].active = false;
+		charTable[i].character = i;
 		charTable[i].encodeLength = 0;		
 		charTable[i].encoding = 0;
 		charTable[i].occurrence = 0;
@@ -40,7 +41,10 @@ void CharList::sortTable()
 	cout << endl;
 	for(char l=0; l<CHAR_MAX; l++)
 	{
-		if(((CharNode*) &*(charSort[l]))->occurrence > 0) cout << "|\"" << l << "\":" << ((CharNode*) &*(charSort[l]))->occurrence << "| , ";
+		if(((CharNode*) &*(charSort[l]))->occurrence > 0) 
+		{
+			cout << "|\"" << ((CharNode*) &*(charSort[l]))->character << "\":" << ((CharNode*) &*(charSort[l]))->occurrence << "|  ";
+		}
 	}
 }
 
@@ -94,11 +98,6 @@ void CharList::bufferFile(string fname)
 		}
 
 		cout << endl << " length is = " << len << endl;
-}
-
-bool CharList::isFound(char a)
-{
-	return 1;
 }
 
 void CharList::populateTable()

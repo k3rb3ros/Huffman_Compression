@@ -5,19 +5,19 @@
 * September 2014
 */
 
-
 #ifndef HUFFMAN_TRIE_H
 #define HUFFMAN_TRIE_H
 
+#include "charlist.h"
 #include "headers.h"
 
-struct Enc_node //Enc node used to create a lookup table of Huffman encoding for every character
+/*struct Enc_node //Enc node used to create a lookup table of Huffman encoding for every character
 {	
 	bool active;
 	unsigned long int encoding;
 	int length;
 	Enc_node* buckets;
-};
+};*/
 
 struct Trie_node //Trie node struct used to create Huffman encoding
 {
@@ -28,16 +28,16 @@ struct Trie_node //Trie node struct used to create Huffman encoding
 	Trie_node* right;
 };
 
-class Trie //Contains all the necessary resources to produce a huffman tree and lookup table
+class Trie: public CharList //Contains all the necessary resources to produce a huffman tree and lookup table
 {
 	private:
 
-	Enc_node enc_table[CHAR_MAX];
+	//Enc_node enc_table[CHAR_MAX];
 	Trie_node* root;
 	unsigned long int char_count;
 	unsigned long int node_count;
 	void count_traverse(Trie_node* root);
-	void delete_buckets(Enc_node* bkt);
+	//void delete_buckets(Enc_node* bkt);
 	void delete_trie(Trie_node* root);
 	void enc_traverse(Trie_node* Root, stack<int> huffman, int code_length);
 	void node_traverse(Trie_node* root);

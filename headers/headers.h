@@ -7,11 +7,11 @@
 
 #ifndef INCLUDES_H
 #define INCLUDES_H
-    #include <stdio.h>
 	#include <iostream>
 	#include <fstream>
 	#include <limits.h>
 	#include <stack>
+    	#include <stdio.h>
 	#include <vector>
 
 	using namespace std;

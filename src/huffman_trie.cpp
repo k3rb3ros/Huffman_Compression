@@ -15,13 +15,13 @@ void Trie::count_traverse(Trie_node* Root) //Recursively count the number of cha
 	char_count += Root -> val; 
 }
 
-void Trie::delete_buckets(Enc_node* bkt)
+/*void Trie::delete_buckets(Enc_node* bkt)
 {
 	if(bkt == NULL) return;
 	delete_buckets(bkt -> buckets);
 	bkt -> buckets = NULL;
 	delete bkt; 
-}
+}*/
 
 void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 {
@@ -53,7 +53,7 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman, int code_length)
 	}
 	if(is_char == true)//if node represents a character in our trie
 	{
-		enc_table[ch].active = true; //activate that node in the table 
+		/*enc_table[ch].active = true; //activate that node in the table 
 		while(!huffman.empty())
 		{
 			direction = huffman.top(); //get the 0 or 1 on the top of the stack
@@ -69,7 +69,7 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman, int code_length)
 			}
 			//bitshift anyhting in code to the left
 			code = code | direction; //bitwise and it with code
-		}
+		}*/
 	}
 
 }
@@ -95,13 +95,13 @@ Trie::Trie() //Constructor inits root node
 	root -> val = 0;
 	root -> left = NULL;
 	root -> right = NULL;
-	for(int i=0; i<CHAR_MAX; i++) //Initialize the encoding table
+	/*for(int i=0; i<CHAR_MAX; i++) //Initialize the encoding table
 	{
 		enc_table[i].active = false;
 		enc_table[i].encoding = 0;
 		enc_table[i].length = 0;
 		enc_table[i].buckets = NULL; 
-	}
+	}*/
 }
 unsigned long int Trie::character_count() //Recursively count the number of characters represented by the Trie **FOR DEBUGGING**
 {
@@ -124,8 +124,8 @@ unsigned long int Trie::size_of_trie() //Recursively count the number of nodes i
 Trie::~Trie() //Destructor deletes entire trie
 {
 	delete_trie(root);
-	for(int i=0; i<CHAR_MAX; i++) //Recursively delete any buckets that were allocated on the heap
+	/*for(int i=0; i<CHAR_MAX; i++) //Recursively delete any buckets that were allocated on the heap
 	{
 		delete_buckets(enc_table[i].buckets); 
-	}
+	}*/
 }

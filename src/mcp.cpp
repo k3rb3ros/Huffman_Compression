@@ -8,20 +8,21 @@
 #include "../headers/charlist.h"
 #include "../headers/headers.h"
 #include "../headers/huffman_trie.h"
+#include "../headers/mcp.h"
 
-int main(int argv, char **argc){
-	
-	CharList c;
+int main(int argv, char **argc)
+{	
 	string fname = "../text/us_constitution.txt";
-	//Trie huffman;
-
-	c.bufferFile(fname);	
-    c.populateTable();
-	c.showCharCount();
-	c.sortTable();
-	//cout << "Constructed and inited\n";
-	//cout << "Nodes: " << huffman.size_of_trie() << endl;
-	//cout << "Characters: " << huffman.character_count() << endl;
+	Trie huffman;
+	//example compress
+	
+	huffman.bufferFile(fname);
+	huffman.populateTable();
+	huffman.showCharCount();
+	huffman.sortTable();
+	cout << endl;
+	cout << "Nodes: " << huffman.size_of_trie() << endl;
+	cout << "Characters: " << huffman.character_count() << endl;
 	while(getchar() != '\n');
 	return 0;
 }
