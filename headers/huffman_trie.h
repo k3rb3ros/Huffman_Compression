@@ -10,15 +10,7 @@
 
 #include "charlist.h"
 #include "headers.h"
-
-struct Trie_node //Trie node struct used to create Huffman encoding
-{
-	bool is_character;	
-	char character;
-	unsigned long int val;
-	Trie_node* left;
-	Trie_node* right;
-};
+#include "structs.h"
 
 class Trie: public CharList //Contains all the necessary resources to produce a huffman tree and lookup table
 {
@@ -30,7 +22,7 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 	unsigned long int node_count;
 	void count_traverse(Trie_node* Root);
 	void delete_trie(Trie_node* Root);
-	void enc_traverse(Trie_node* Root, stack<int> huffman, int code_length);
+	void enc_traverse(Trie_node* Root, stack<int> huffman);
 	void node_traverse(Trie_node* Root);
 	unsigned long int sum_nodes(Trie_node* Root, unsigned long int sum);
 
@@ -41,6 +33,8 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 	unsigned long int size_of_trie();
 	void populate_trie();
 	void get_encoding();
+	void print_encoding_table();
+	void print_sort_table();
 	~Trie();
 };
 

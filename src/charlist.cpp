@@ -38,14 +38,6 @@ void CharList::sortTable()
 			}
 		}
 	}
-	cout << endl;
-	for(char l=0; l<CHAR_MAX; l++)
-	{
-		if(((CharNode*) &*(charSort[l]))->occurrence > 0) 
-		{
-			cout << "|\"" << ((CharNode*) &*(charSort[l]))->character << "\":" << ((CharNode*) &*(charSort[l]))->occurrence << "|  ";
-		}
-	}
 }
 
 void CharList::delBuckets(CharBucket* buckets) //recursively delete any buckets that have been added to charTable
@@ -125,7 +117,7 @@ void CharList::showCharCount()
 	{
 		if(charTable[i].active == true)
 		{
-			cout << "\"" << i << "\"" << charTable[i].occurrence << ", ";
+			cout << "|" << i << "| " << charTable[i].occurrence << ", ";
 		}
 	}
 }

@@ -59,44 +59,53 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 	Root = NULL; //set the pointer to Null to prevent any confusion that Root has been erased
 }
 
-void Trie::enc_traverse(Trie_node* Root, stack<int> huffman, int code_length)
+void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 {
 	bool is_char = false;
+	bool reallocate = false;
 	char ch = 0;
-	unsigned long int direction = 0;
-	unsigned long int code = 0;
+	CharBucket* bucket = NULL;
+	short int direction = 0;
+	int* code_length = NULL;
+	unsigned long int* code = NULL;
+	//unsigned long int code = 0;
 	if(Root == NULL) return;
 	is_char = Root -> is_character;
 	ch = Root -> character;
 	if(Root -> left != NULL)
 	{
 		huffman.push(0);
-		enc_traverse(Root -> left, huffman, code_length++);
+		enc_traverse(Root -> left, huffman);
 	}
 	if(Root -> right != NULL)
 	{
 		huffman.push(1);
-		enc_traverse(Root -> right, huffman, code_length++);
+		enc_traverse(Root -> right, huffman);
 	}
 	if(is_char == true)//if node represents a character in our trie
 	{
-		/*enc_table[ch].active = true; //activate that node in the table 
+		ch = Root -> character; //Keep track of the character to look it up in our look up table
+		code = &(charTable[ch].encoding); //Create a pointer to where the characters encoding is stored in the charTable
+		code_length = &(charTable[ch].encodeLength); //Create a point to where the characters encoding length is stored in the charTable
+		
 		while(!huffman.empty())
 		{
 			direction = huffman.top(); //get the 0 or 1 on the top of the stack
 			huffman.pop(); //pop it off the stack
-			if(code_length < 64)
+			if(false)//(*(code_length) | 0x8000000000000000) == 0x8000000000000000) //if we are about to overflow our long unsigned int
 			{
-				code = code << 1; //bitshift whatever is in the buffer to the left by 1 bit
-				code = code | direction; //Add the least significant bit to the buffer 
+				cerr << "bitcode not exectuting" << endl;
+				//cout << "code: " << *(code) << " length: " << *(code_length) << endl;
+				//FIXME
 			}
 			else
 			{
-				//FIXME
+				*(code) = *(code) | direction; //Add the least significant bit to the buffer 
+				*(code) = *(code) << 1; //bitshift whatever is in the buffer to the left by 1 bit
+				*(code_length) ++;
 			}
-			//bitshift anyhting in code to the left
-			code = code | direction; //bitwise and it with code
-		}*/
+		}
+		cout << "Code for \"" << ch << "\":" << hex << *(code) << dec << endl;
 	}
 
 }
@@ -127,13 +136,6 @@ Trie::Trie() //Constructor inits root node
 	root -> val = 0;
 	root -> left = NULL;
 	root -> right = NULL;
-	/*for(int i=0; i<CHAR_MAX; i++) //Initialize the encoding table
-	{
-		enc_table[i].active = false;
-		enc_table[i].encoding = 0;
-		enc_table[i].length = 0;
-		enc_table[i].buckets = NULL; 
-	}*/
 }
 unsigned long int Trie::character_count() //Recursively count the number of characters represented by the Trie **FOR DEBUGGING**
 {
@@ -164,8 +166,31 @@ void Trie::populate_trie()
 
 void Trie::get_encoding() //Recursively traverse to the character creating the bitstring encoding based on left and right traversals
 {	
-	stack<int> branch;
-	enc_traverse(root, branch, 0);	
+	stack<int> code;
+	enc_traverse(root, code);	
+}
+
+void Trie::print_encoding_table()
+{
+	cout << endl << "Encoding Table" << endl;
+	for(char i=0; i<CHAR_MAX; i++)
+	{
+		if(charTable[i].active == true)
+		{
+			cout << "|" << i << ":0x" << hex << charTable[i].encoding << dec << "| ";
+		}
+	}
+}
+
+void Trie::print_sort_table() //prints the active characters and their occurence in sorted order
+{
+	for(char l=0; l<CHAR_MAX; l++)
+        {
+                if(((CharNode*) &*(charSort[l]))->occurrence > 0)
+                {
+                        cout << "|\"" << ((CharNode*) &*(charSort[l]))->character << "\":" << ((CharNode*) &*(charSort[l]))->occurrence << "|  ";
+                }
+        }
 }
 
 Trie::~Trie() //Destructor deletes entire trie

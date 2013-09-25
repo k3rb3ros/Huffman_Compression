@@ -5,10 +5,8 @@
 * September 2014
 */
 
-#ifndef MCP_H
-#define MCP_H
-
-#include "headers.h"
+#ifndef STRUCTS_H
+#define STRUCTS_H
 
 struct CharBucket
 {
@@ -21,9 +19,18 @@ struct CharNode //Structure used for CharTable will be shared with Trie class
 	bool active;
 	char character;	
 	CharBucket* buckets;
-	unsigned long int encodeLength;	
+	int encodeLength;	
 	unsigned long int encoding;
 	unsigned long int occurrence;
+};
+
+struct Trie_node //Trie node struct used to create Huffman encoding
+{
+	bool is_character;	
+	char character;
+	unsigned long int val;
+	Trie_node* left;
+	Trie_node* right;
 };
 
 #endif

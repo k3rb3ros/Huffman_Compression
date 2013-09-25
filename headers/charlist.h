@@ -9,7 +9,7 @@
 #define CHARLIST_H
 
 #include "headers.h"
-#include "mcp.h"
+#include "structs.h"
 
 class CharList
 {
@@ -18,8 +18,6 @@ class CharList
 	char* buffer;
 	int charOccurrence;
 	unsigned long int len;
-	//CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
-	//char* charSort[CHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
 	void delBuckets(CharBucket* buckets);	
 	void swap(char* &a, char* &b);
 	
