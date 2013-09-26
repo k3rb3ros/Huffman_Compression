@@ -7,15 +7,38 @@
 
 #include "../headers/huffman_trie.h"
 
+Trie_node* Trie::insert_node(Trie_node* Root, Trie_node* New_node)
+{
+	Trie_node* knew_root = NULL;
+	unsigned long int sum = 0;
+	
+	if(Root == NULL || New_node == NULL) return Root; //check for valid input and return otherwise
+	
+	knew_root = new Trie_node; //allocate the new node
+	knew_root -> is_character = false;
+	knew_root -> val = (Root -> val + New_node -> val);
+	knew_root -> character = 0;
+	if(Root -> val >= New_node -> val)
+	{
+		knew_root -> left = New_node;
+		knew_root -> right = Root;
+	}
+	else
+	{
+		knew_root -> left = Root;
+		knew_root -> right = New_node;
+	}
+	return knew_root;
+}
+
 Trie_node* Trie::insert_node(Trie_node* Root, char character, unsigned long int val)
 {
 	Trie_node* knew_node = NULL;
 	Trie_node* knew_root = NULL;
 	unsigned long int sum = 0;
+
 	if(Root == NULL) return Root;
 	
-	sum = sum_nodes(Root, 0); //Sum all the weights of the current root node
-
 	knew_node = new Trie_node; //allocate storage for the new node and set the values
 	knew_node -> is_character = true;
 	knew_node -> character = character;
@@ -28,7 +51,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, char character, unsigned long int 
 	knew_root -> character = 0;
 	knew_root -> val = sum + val;	
 	
-	if(sum > val) //insert new node to the left
+	if((Root -> val) >= val) //insert new node to the left
 	{
 		knew_root -> left = knew_node;
 		knew_root -> right = Root;
@@ -40,6 +63,50 @@ Trie_node* Trie::insert_node(Trie_node* Root, char character, unsigned long int 
 	}
 	
 	return knew_root; //knew_root;
+}
+
+Trie_node* Trie::insert_2nodes(Trie_node* Root, char char1, unsigned long int val1, char char2, unsigned long int val2)
+{
+	Trie_node* knew_root = NULL;
+	Trie_node* knew_left = NULL;
+	Trie_node* knew_right = NULL;
+
+	if(Root == NULL) return Root; //Check if Root is NULL, if it is abort
+	
+	//allocate storage for the new nodes and set the values
+	knew_root = new Trie_node;
+	knew_root -> is_character = false;
+	knew_root -> character = 0;
+	knew_root -> val = val1 + val2 + (Root -> val);
+	knew_left = new Trie_node;
+	knew_left -> is_character = true;
+	knew_left -> left = NULL;
+	knew_left -> right = NULL;
+	knew_right = new Trie_node;
+	knew_right -> is_character = true;
+	knew_right -> left = NULL;
+	knew_right -> right = NULL;
+
+	if(char1 <= char2)
+	{
+		knew_left -> character = char1;
+		knew_left -> val = val1;
+		knew_right -> character = char2;
+		knew_right -> val = val2;
+	}
+	else
+	{
+		knew_left -> character = char2;
+		knew_left -> val = val2;
+		knew_right -> character = char1;
+		knew_right -> val = val1;
+	}
+
+	//set the root to point to the knew children
+	knew_root -> left = knew_left;
+	knew_root -> right = knew_right;
+	
+	return insert_node(Root, knew_root); //recursively insert the sub tree into root
 }
 
 void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**
@@ -110,6 +177,13 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 
 }
 
+bool Trie::is_a_leaf(Trie_node* Node)
+{
+	if(Node == NULL) return false;
+	if(Node -> left == NULL && Node -> right == NULL) return true;
+	return false;
+}
+
 void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing in the Trie
 {
 	if(Root == NULL) return; //terminate recursion
@@ -151,15 +225,43 @@ unsigned long int Trie::size_of_trie() //Recursively count the number of nodes i
 
 void Trie::populate_trie()
 {
-	char character = 0;
-	unsigned long int occurrence = 0;
-	for(char i=0; i<CHAR_MAX; i++)
+	bool even = false;
+	char char1 = 0;
+	char char2 = 0;
+	unsigned long int occur1 = 0;
+	unsigned long int occur2 = 0;
+	for(char h=0; h<CHAR_MAX; h++)//determine if there are an even or odd number of nodes
 	{
-		character = (((CharNode*) &*(charSort[i]))->character);
-		occurrence = (((CharNode*) &*(charSort[i]))->occurrence);
-		if(occurrence > 0)
+		if(charSort[h] > 0)
 		{
-			root = insert_node(root, character, occurrence);
+			if(h%2 == 0) even = true;
+			break;
+		}
+	} 
+	for(char i=0; i<CHAR_MAX; i++) 
+	{
+		char1 = (((CharNode*) &*(charSort[i]))->character);
+		occur1 = (((CharNode*) &*(charSort[i]))->occurrence);
+		if(occur1 > 0)
+		{
+			if(even && i < (CHAR_MAX-1)) //if there are an even number of nodes and we aren't at the end of the array then insert with insert2
+			{
+				char2 = (((CharNode*) &*(charSort[i+1]))->character);
+				occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
+				root = insert_2nodes(root, char1, occur1, char2, occur2);
+				i++; //increment i so that we don't double insert a node
+			}
+			else
+			{
+				if(i < (CHAR_MAX-1))
+				{
+					char2 = (((CharNode*) &*(charSort[i+1]))->character);
+					occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
+					root = insert_2nodes(root, char1, occur1, char2, occur2);
+					i++; //increment i so that we don't double insert a node
+				}
+				else root = insert_node(root, char1, occur1);
+			}
 		}
 	}
 }
@@ -196,8 +298,4 @@ void Trie::print_sort_table() //prints the active characters and their occurence
 Trie::~Trie() //Destructor deletes entire trie
 {
 	delete_trie(root);
-	/*for(int i=0; i<CHAR_MAX; i++) //Recursively delete any buckets that were allocated on the heap
-	{
-		delete_buckets(enc_table[i].buckets); 
-	}*/
 }
