@@ -15,7 +15,8 @@ class CharList
 {
 	private:
 
-	char* buffer;
+	char* file_buffer;
+	char* huffman_buffer;
 	int charOccurrence;
 	unsigned long int len;
 	void delBuckets(CharBucket* buckets);	
@@ -30,6 +31,7 @@ class CharList
 
 	CharList(); //default constructor
 	void bufferFile(string fname); //Name changed so that it makes more sense
+	void bufferHuffman();
 	void populateTable();
 	void showCharCount();
 	void sortTable();

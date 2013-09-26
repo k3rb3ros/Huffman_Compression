@@ -9,7 +9,8 @@
 
 CharList::CharList()
 {
-	buffer = NULL;
+	file_buffer = NULL;
+	huffman_buffer = NULL;
 	charOccurrence = -1;
 	len = 0;
 	for(char i=0; i<CHAR_MAX; i++)
@@ -64,14 +65,14 @@ void CharList::bufferFile(string fname)
 		{
 			in.seekg(0, in.end); //Go to end of stream
 			len = in.tellg(); //Get the length of the file
-			buffer = new char[len+1];
-			buffer[len] = 0; //nullpad the string
+			file_buffer = new char[len+1];
+			file_buffer[len] = 0; //nullpad the string
 			in.seekg(0, in.beg); //Reset stream to beginning
 			in >> noskipws; //tell fstream not to ignore whitespace
 			
 			while(i!=len)
 			{
-				in >> buffer[i];
+				in >> file_buffer[i];
 				i++;
 			}			
 			cout << "Read " << len << " characters... ";
@@ -94,11 +95,11 @@ void CharList::bufferFile(string fname)
 void CharList::populateTable()
 {
 	char ch = 0;
-	if(buffer != NULL)
+	if(file_buffer != NULL)
 	{
 		for(unsigned int i=0; i<len; i++)
 		{
-			ch = buffer[i];
+			ch = file_buffer[i];
 			if(charTable[ch].active == false)
 			{
 				charTable[ch].active = true; //set this character to active
@@ -124,7 +125,7 @@ void CharList::showCharCount()
 
 CharList::~CharList()
 {
-	if(buffer != NULL) delete[] buffer; //Free anything we allocated in buffer
+	if(file_buffer != NULL) delete[] file_buffer; //Free anything we allocated in buffer
 	for(int i=0; i<CHAR_MAX; i++)
 	{
 		delBuckets(charTable[i].buckets);

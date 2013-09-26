@@ -10,7 +10,6 @@
 Trie_node* Trie::insert_node(Trie_node* Root, Trie_node* New_node)
 {
 	Trie_node* knew_root = NULL;
-	unsigned long int sum = 0;
 	
 	if(Root == NULL || New_node == NULL) return Root; //check for valid input and return otherwise
 	
@@ -129,9 +128,9 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 {
 	bool is_char = false;
-	bool reallocate = false;
+	//bool reallocate = false;
 	char ch = 0;
-	CharBucket* bucket = NULL;
+	//CharBucket* bucket = NULL;
 	short int direction = 0;
 	int* code_length = NULL;
 	unsigned long int* code = NULL;
@@ -159,10 +158,9 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 		{
 			direction = huffman.top(); //get the 0 or 1 on the top of the stack
 			huffman.pop(); //pop it off the stack
-			if(false)//(*(code_length) | 0x8000000000000000) == 0x8000000000000000) //if we are about to overflow our long unsigned int
+			if((*(code_length) & 0x8000000000000000) == 0x8000000000000000) //if we are about to overflow our long unsigned int (small endian only)
 			{
 				cerr << "bitcode not exectuting" << endl;
-				//cout << "code: " << *(code) << " length: " << *(code_length) << endl;
 				//FIXME
 			}
 			else
@@ -173,7 +171,7 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 				(*code_length) ++;
 			}
 		}
-		cout << "Code for \"" << ch << "\":" << hex << *(code) << dec << " " << temp << endl;
+		//cout << "Code for \"" << ch << "\":" << hex << *(code) << dec << " " << temp << endl;
 	}
 
 }
@@ -186,32 +184,23 @@ void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing
 	node_count ++;
 }
 
-void Trie::print_binary(unsigned long int binary, int length)
+void Trie::print_binary(CharNode* Node)
 {
-	char  buffer[65];
-	unsigned long int temp = 0;
-	for(int j=0; j<64; j++) buffer[j]=0;
-	for(int i=length; i>-1; i--)
+	unsigned long int binary = Node -> encoding;
+	int len = Node -> encodeLength;
+	for(int i=0; i<len; i++)
 	{
-	 
-		temp = (binary | 1);
-		binary = binary >> 1;
-		if((temp | 1) == 1)buffer[i] = '1';
-		else buffer[i] = '0';
-		//cout << "buffer = " << buffer[i];
+		printf("%lu", (binary >> i) % 2);
 	}
-	//cout <<"length = " << length << ' ';
-	printf( "Binary:%s\n", buffer);
 }
 
 void Trie::printBinary(){
-	unsigned long int temp = 0;
-	int len = 0;
+	//unsigned long int temp = 0;
+	//int len = 0;
 	for(int i=0;i<CHAR_MAX;i++){
-		temp = charTable[i].encoding;
-		len = charTable[i].encodeLength;
-		cout << " Len = " << charTable[i].encodeLength;
-		if(charTable[i].active == true) print_binary(temp, len);
+		//temp = charTable[i].encoding;
+		//len = charTable[i].encodeLength;
+		if(charTable[i].active == true) print_binary(&charTable[i]);
 	}
 }
 unsigned long int Trie::sum_nodes(Trie_node* Root, unsigned long int sum)
@@ -302,7 +291,9 @@ void Trie::print_encoding_table()
 	{
 		if(charTable[i].active == true)
 		{
-			cout << "|" << i << ":0x" << hex << charTable[i].encoding << dec << "| ";
+			cout << "|" << i << ":";
+			print_binary(&charTable[i]);
+			cout << "| ";
 		}
 	}
 }
