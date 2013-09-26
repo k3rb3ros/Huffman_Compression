@@ -135,7 +135,6 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 	short int direction = 0;
 	int* code_length = NULL;
 	unsigned long int* code = NULL;
-	//unsigned long int code = 0;
 	if(Root == NULL) return;
 	is_char = Root -> is_character;
 	ch = Root -> character;
@@ -155,6 +154,7 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 		code = &(charTable[ch].encoding); //Create a pointer to where the characters encoding is stored in the charTable
 		code_length = &(charTable[ch].encodeLength); //Create a point to where the characters encoding length is stored in the charTable
 		
+		int temp = 0;/*DEBUG*/
 		while(!huffman.empty())
 		{
 			direction = huffman.top(); //get the 0 or 1 on the top of the stack
@@ -169,19 +169,13 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 			{
 				*(code) = *(code) | direction; //Add the least significant bit to the buffer 
 				*(code) = *(code) << 1; //bitshift whatever is in the buffer to the left by 1 bit
-				*(code_length) ++;
+				temp ++;
+				(*code_length) ++;
 			}
 		}
-		cout << "Code for \"" << ch << "\":" << hex << *(code) << dec << endl;
+		cout << "Code for \"" << ch << "\":" << hex << *(code) << dec << " " << temp << endl;
 	}
 
-}
-
-bool Trie::is_a_leaf(Trie_node* Node)
-{
-	if(Node == NULL) return false;
-	if(Node -> left == NULL && Node -> right == NULL) return true;
-	return false;
 }
 
 void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing in the Trie
@@ -211,6 +205,7 @@ Trie::Trie() //Constructor inits root node
 	root -> left = NULL;
 	root -> right = NULL;
 }
+
 unsigned long int Trie::character_count() //Recursively count the number of characters represented by the Trie **FOR DEBUGGING**
 {
 	count_traverse(root);
@@ -223,14 +218,14 @@ unsigned long int Trie::size_of_trie() //Recursively count the number of nodes i
 	return node_count;
 }
 
-void Trie::populate_trie()
+void Trie::populate_trie() //Fills the trie data structure with sorted character and character occurences from the sort table
 {
 	bool even = false;
 	char char1 = 0;
 	char char2 = 0;
 	unsigned long int occur1 = 0;
 	unsigned long int occur2 = 0;
-	for(char h=0; h<CHAR_MAX; h++)//determine if there are an even or odd number of nodes
+	for(char h=0; h<CHAR_MAX; h++)//determine if there is an even or odd number of nodes
 	{
 		if(charSort[h] > 0)
 		{
