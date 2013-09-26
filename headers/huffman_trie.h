@@ -26,6 +26,7 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 	void delete_trie(Trie_node* Root);
 	void enc_traverse(Trie_node* Root, stack<int> huffman);
 	void node_traverse(Trie_node* Root);
+	void print_binary(unsigned long int binary, int length);
 	unsigned long int sum_nodes(Trie_node* Root, unsigned long int sum);
 
 	public:
@@ -35,6 +36,7 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 	unsigned long int size_of_trie();
 	void populate_trie();
 	void get_encoding();
+	void printBinary();
 	void print_encoding_table();
 	void print_sort_table();
 	~Trie();

@@ -186,6 +186,34 @@ void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing
 	node_count ++;
 }
 
+void Trie::print_binary(unsigned long int binary, int length)
+{
+	char  buffer[65];
+	unsigned long int temp = 0;
+	for(int j=0; j<64; j++) buffer[j]=0;
+	for(int i=length; i>-1; i--)
+	{
+	 
+		temp = (binary | 1);
+		binary = binary >> 1;
+		if((temp | 1) == 1)buffer[i] = '1';
+		else buffer[i] = '0';
+		//cout << "buffer = " << buffer[i];
+	}
+	//cout <<"length = " << length << ' ';
+	printf( "Binary:%s\n", buffer);
+}
+
+void Trie::printBinary(){
+	unsigned long int temp = 0;
+	int len = 0;
+	for(int i=0;i<CHAR_MAX;i++){
+		temp = charTable[i].encoding;
+		len = charTable[i].encodeLength;
+		cout << " Len = " << charTable[i].encodeLength;
+		if(charTable[i].active == true) print_binary(temp, len);
+	}
+}
 unsigned long int Trie::sum_nodes(Trie_node* Root, unsigned long int sum)
 {	
 	if(Root == NULL) return sum;
