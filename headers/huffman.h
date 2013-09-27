@@ -13,16 +13,19 @@
 #include "huffman_trie.h"
 #include "structs.h"
 
+#define MAGIC_NUMBER 0x63130
+#define DELIM "\1\27"
+#define O_EOF '\26'
+
+
 class Huffman : public Trie //Huffman is a CharList and Trie
 {
 	private:
 	//CharList* c_list;
-	int magic_number;
+	//int magic_number;
 	string file_to_compress;
 	string header_table;
 	string encoded_text;
-	char end_of_text_marker;
-	char end_of_file;
 	void getFileName();
 	
 	public:

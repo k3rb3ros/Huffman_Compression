@@ -14,7 +14,7 @@
 class CharList
 {
 	private:	
-	friend class HuffmanHeader;
+	friend class Huffman;
 	char* file_buffer;
 	char* huffman_buffer;
 	int charOccurrence;
