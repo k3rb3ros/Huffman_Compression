@@ -7,15 +7,14 @@
 
 #include "../headers/charlist.h"
 #include "../headers/headers.h"
+#include "../headers/huffman.h"
 #include "../headers/huffman_trie.h"
-#include "../headers/huffman_header.h"
 
 int main(int argv, char **argc)
 {	
 	string fname = "../text/us_constitution.txt";
-	Trie huffman;
-	HuffmanHeader h;
-	h.populateHeader(fname);
+	string hfile = "header_output_test.txt";
+	Huffman huffman;
 	//example compress
 	huffman.bufferFile(fname);
 	huffman.populateTable();
@@ -27,6 +26,7 @@ int main(int argv, char **argc)
 	huffman.get_encoding();
 	huffman.print_encoding_table();
 	//huffman.printBinary();
+	huffman.populateHeader(hfile,fname);
 	while(getchar() != '\n');
 	return 0;
 }

@@ -8,22 +8,26 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+#include "charlist.h"
 #include "headers.h"
+#include "huffman_trie.h"
+#include "structs.h"
 
-class HuffmanHeader
+class Huffman : public Trie //Huffman is a CharList and Trie
 {
 	private:
+	//CharList* c_list;
 	int magic_number;
 	string file_to_compress;
 	string header_table;
 	string encoded_text;
 	char end_of_text_marker;
-	char eof;
+	char end_of_file;
 	void getFileName();
 	
 	public:
-	HuffmanHeader();
-	void populateHeader(string fname);
-	~HuffmanHeader();
+	Huffman();
+	void populateHeader(string hfile,string fname);
+	~Huffman();
 };
 #endif

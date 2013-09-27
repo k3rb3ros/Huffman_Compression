@@ -13,8 +13,8 @@
 
 class CharList
 {
-	private:
-
+	private:	
+	friend class HuffmanHeader;
 	char* file_buffer;
 	char* huffman_buffer;
 	int charOccurrence;
