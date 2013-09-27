@@ -7,13 +7,26 @@
 #include "../headers/huffman.h"
 Huffman::Huffman()
 {
-	//magic_number = 0x63130;
 	file_to_compress = "";
 	header_table = "";
 	encoded_text = "";
 }
 
-void Huffman::populateHeader(string hfile,string fname)
+string getMcpName(string fname)
+{
+	return "";
+}
+
+void Huffman::compress() //compress the original message
+{
+	huffman_buffer = new char[len];
+	for(int i=0; i<CHAR_MAX; i++)
+	{
+		
+	}
+}
+
+void Huffman::populateHeader(string hfile,string fname) // Write the header
 {
 	ofstream outf(hfile.c_str());
 	cout << "Object from other class: " << charTable[45].character << endl;

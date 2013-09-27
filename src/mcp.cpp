@@ -26,7 +26,7 @@ int main(int argv, char **argc)
 	huffman.get_encoding();
 	huffman.print_encoding_table();
 	//huffman.printBinary();
-	huffman.populateHeader(hfile,fname);
+	//huffman.populateHeader(hfile,fname);
 	while(getchar() != '\n');
 	return 0;
 }
