@@ -30,6 +30,8 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	
 	public:
 	Huffman();
+	void compress();
+	int readHeader(string hfile);
 	void populateHeader(string hfile,string fname);
 	~Huffman();
 };

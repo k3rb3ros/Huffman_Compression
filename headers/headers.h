@@ -11,8 +11,8 @@
 	#include <fstream>
 	#include <limits.h>
 	#include <stack>
-    	#include <stdio.h>
-	#include <vector>
+    #include <stdio.h>
+	#include <sstream>
 
 	using namespace std;
 
