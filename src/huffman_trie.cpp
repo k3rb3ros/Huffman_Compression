@@ -188,7 +188,7 @@ void Trie::print_binary(CharNode* Node)
 {
 	unsigned long int binary = Node -> encoding;
 	int len = Node -> encodeLength;
-	for(int i=0; i<len; i++)
+	for(int i=len-1; i>=0; i--)
 	{
 		printf("%lu", (binary >> i) % 2);
 	}
@@ -200,7 +200,12 @@ void Trie::printBinary(){
 	for(int i=0;i<CHAR_MAX;i++){
 		//temp = charTable[i].encoding;
 		//len = charTable[i].encodeLength;
-		if(charTable[i].active == true) print_binary(&charTable[i]);
+		if(charTable[i].active == true)
+		{
+			cout << charTable[i].character << ": ";
+			print_binary(&charTable[i]);
+			cout << endl;
+		}
 	}
 }
 unsigned long int Trie::sum_nodes(Trie_node* Root, unsigned long int sum)

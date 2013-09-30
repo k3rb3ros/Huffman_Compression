@@ -65,8 +65,9 @@ void CharList::bufferFile(string fname)
 		{
 			in.seekg(0, in.end); //Go to end of stream
 			len = in.tellg(); //Get the length of the file
+			len -= EOF_LENGTH; //Subtract the length of the eof character
 			file_buffer = new char[len+1];
-			file_buffer[len] = 0; //nullpad the string
+			file_buffer[len] = 0; //null terminate the string
 			in.seekg(0, in.beg); //Reset stream to beginning
 			in >> noskipws; //tell fstream not to ignore whitespace
 			
@@ -100,7 +101,11 @@ void CharList::populateTable()
 		for(unsigned int i=0; i<len; i++)
 		{
 			ch = file_buffer[i];
-			if(charTable[ch].active == false)
+			if(ch < 0 || ch > 128)
+			{
+				cerr << "invalid (standard range) ascii character encountered\n";
+			}
+			else if(charTable[ch].active == false)
 			{
 				charTable[ch].active = true; //set this character to active
 				charTable[ch].occurrence = 1; //set occurance to 1
@@ -125,7 +130,8 @@ void CharList::showCharCount()
 
 CharList::~CharList()
 {
-	if(file_buffer != NULL) delete[] file_buffer; //Free anything we allocated in buffer
+	if(file_buffer != NULL) delete[] file_buffer; //Free file_buffer
+	if(huffman_buffer != NULL) delete[] huffman_buffer; //Free hufmman_buffer
 	for(int i=0; i<CHAR_MAX; i++)
 	{
 		delBuckets(charTable[i].buckets);

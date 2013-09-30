@@ -24,8 +24,10 @@ int main(int argv, char **argc)
 	cout << "Nodes: " << huffman.size_of_trie() << endl;
 	cout << "Characters: " << huffman.character_count() << endl;
 	huffman.get_encoding();
-	huffman.print_encoding_table();
-	//huffman.printBinary();
+	//huffman.print_encoding_table();
+	//huffman.compress();
+	huffman.printBinary();
+	huffman.test();
 	//huffman.populateHeader(hfile,fname);
 	while(getchar() != '\n');
 	return 0;

@@ -21,16 +21,19 @@
 class Huffman : public Trie //Huffman is a CharList and Trie
 {
 	private:
-	//CharList* c_list;
-	//int magic_number;
 	string file_to_compress;
 	string header_table;
 	string encoded_text;
-	void getFileName();
-	
+	string getMcpName(string);
+
+	void bit_write(char &src, char &dest, const short int bits);
+	short int get_byte(int length);
+
 	public:
 	Huffman();
+	void compress();
 	void populateHeader(string hfile,string fname);
+	void test();
 	~Huffman();
 };
 #endif
