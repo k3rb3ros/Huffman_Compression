@@ -28,6 +28,7 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 
 	void bit_write(char &src, char &dest, const short int bits);
 	short int get_byte(int length);
+	string getLine(ifstream &inf, string delim);
 
 	public:
 	Huffman();

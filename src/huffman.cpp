@@ -46,6 +46,21 @@ short int Huffman::get_byte(int length)
 	return ceil(((sizeof(unsigned long int)*8)-length)/8);
 }
 
+string getLine(ifstream &inf, string delim)
+{
+    //char* c = calloc(260, sizeof(char)); //Allocate enough storage for any valid line
+    //char c2 = 0;
+    //int i = 0;
+    //do //Get what the user types until ENTER is pressed
+    //{
+    //    c2 = getchar();
+    //    c[i++] = c2;
+    //}
+    //while ((c2 != '\n') && (i < 259));
+    //c[i-1] = 0; //Eat the newline character from the enter press so it doesn't screw up later stdin inputs
+    //return c; //return the string of the line you have just gotten
+}
+
 string getMcpName(string fname)
 {
 	return "";
