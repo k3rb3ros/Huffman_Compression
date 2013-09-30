@@ -277,8 +277,15 @@ void Huffman::test()
 	assert(get_offset(12) == 4);
 	assert(get_offset(16) == 0);
 	assert(get_offset(1) == 7);
-	cout << "get_offset tests passed" << endl;	
+	cout << "get_offset tests passed" << endl;
 
+	assert(get_bit(2, 15) == 1);
+	assert(get_bit(4, 12) == 0);
+	assert(get_bit(2, 14) == 0);
+	assert(get_bit(5, 15) == 4);
+	assert(get_bit(2, 10) == -4);	
+	cout << "get_bit tests passed" << endl;
+	
 	cout << "Dumping file_buffer to file " << endl;
 	dump_buffer();
 }	
