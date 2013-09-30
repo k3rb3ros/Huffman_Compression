@@ -119,7 +119,7 @@ void CharList::populateTable()
 
 void CharList::showCharCount()
 {
-	cout << "Character Count:" << endl;
+	cout << "Character Occurance Table:" << endl;
 	for(unsigned char i=0; i<UCHAR_MAX; i++)
 	{
 		if(charTable[i].active == true)

@@ -52,9 +52,23 @@ void Huffman::dump_buffer()
 	
 }
 
+short int Huffman::get_bit(int l_carry, short int length)
+{		
+	short int offset = (8 - (length % 8));
+	if(offset == 8) offset = 0;
+	return (l_carry - offset);
+}
+
 short int Huffman::get_byte(int length)
 {
 	return ceil(((sizeof(unsigned long int)*8)-length)/8);
+}
+
+short int Huffman::get_offset(int length)
+{
+	short int offset = (8 - (length % 8));
+	if(offset == 8) offset = 0;
+	return offset;
 }
 
 string getLine(ifstream &inf, string delim)
@@ -84,51 +98,77 @@ void Huffman::compress() //compress the original message
 	unsigned char carry_over = 0;
 	unsigned char* write_block = NULL;
 	int code_length = 0;
-	int local_length = 0;
 	int index = 0;
 	short int byte = 0;
 	short int offset = 0;
+	short int reallign = 0;
 	unsigned long int bit_code = 0;
-	unsigned long int* zed = NULL;
+	//unsigned long int* zed = NULL;
 
-	huffman_buffer = new unsigned char[len];//allocate the buffer
-	zed = (unsigned long int*)huffman_buffer; //set zed to point to the buffer
-	for(short int l=0; l<(UCHAR_MAX/sizeof(unsigned long int)); l++) zed[l] = 0; //zeropad the buffer (faster when done with size of system register)
+	huffman_buffer = new unsigned char[H_BUF];//allocate the buffer
+	//zed = (unsigned long int*)huffman_buffer; //set zed to point to the buffer
+	for(short int k=0; k<H_BUF; k++) huffman_buffer[k] = 0;
+	//for(short int l=0; l<(H_BUF/sizeof(unsigned long int)); l++) zed[l] = 0; //zeropad the buffer (faster when done with size of system register)
 	
 	for(unsigned long int i=0; i<len; i++)
 	{
 		ch = file_buffer[i]; //get the character we are encoding
-		//if(ch < 0 || ch > 128) cerr << "Character [" << (int)ch << "] in buffer out of ascii range!" << endl;
 		bit_code = charTable[ch].encoding; //look up its bit_code
 		code_length = charTable[ch].encodeLength; //look up the length (in bits) of the bitcode
-		local_length = code_length; //set out local length to the length of the bitstring
 		write_block = (unsigned char*)&bit_code; //point write_block to the bitcode
 		byte = get_byte(code_length); //get the index in the byte buffer that binary is stored
-		offset = (8 - (code_length %8)); //Calculate the offset to byte allign the bit_code
+		offset = get_offset(code_length); //Calculate the offset to byte allign the bit_code
 		
 		if(carry == false) //byte align bit_code
 		{
-			bit_code = bit_code << offset;
+			bit_code <<= offset;
 		}
 		else //write the first few bits to byte left over from the previous encoding
 		{
 			index++;
-			//offset = 
-			//bit_write(carry_over, write_block[byte], offset);
-			//huffman_buffer[index++] = carry_over; 
+			reallign = get_bit(reallign, code_length);	//figure out the spacing between the last bit code and next one
+			if(reallign <0) //if there is extra space adjust the bitcode left
+			{
+				reallign *= -1; //invert the value
+				bit_code <<= reallign; //shift the bits left to fill the byte
+				bit_write(write_block[byte], carry_over, reallign-1); //write the bits to carry_over byte
+				huffman_buffer[index++] = carry_over; //write carry_over byte to the buffer
+				offset = (8-reallign); //update offset
+				code_length -= offset; //adjust the code length
+				if(code_length >0) byte++; //move to the next byte if we haven't written the entire bitstring already
+			}
+			else if (reallign >0) //if there isn't enough space shift the next bitcode right
+			{
+				bit_code >>= reallign; //shift the bits right to make align the 2nd bitcode
+				bit_write(write_block[byte], carry_over, reallign-1); //write the bits to carry_over byte
+				huffman_buffer[index++] = carry_over; //write carry_over byte to the buffer
+				offset = (8-reallign-1); //update the offset for future calculations
+				code_length -= offset; //update the length for future calculations
+				bit_code = charTable[ch].encoding; //reload the bitstring to get the bits we lost by right shifting
+				bit_code <<= offset; //Shift left to get rid of the 
+				//don't increment byte as we need to re-read that part of the code 
+			}
+			else
+			{
+				bit_write(write_block[byte], carry_over, reallign-1); //write the bits to carry_over byte
+				huffman_buffer[index++] = carry_over; //carry_over to buffer
+				code_length -= offset; //update length for future calculations	
+				if(code_length >0) byte++; //move to the next byte if we haven't written the entire bitstring already
+			}
 			carry_over = 0;
-			carry == false;	
+			carry == false;
 		}
-		while(!(local_length < 8))
+		while(!(code_length < 8))
 		{
 			huffman_buffer[index++] = write_block[byte++]; //copy the code to buffer as raw binary while we can
-			local_length -= 8; //decrement local length by one byte
+			code_length -= 8; //decrement local length by one byte
 		}
-		if(local_length > 0) //if the remaining bit code isn't at a byte boundry then use our bit_write to write the remaining bits to carry_over byte
+		if(code_length > 0) //if the remaining bit code isn't at a byte boundry then use our bit_write to write the remaining bits to carry_over byte
 		{
 			carry = true;
 			carry_over = write_block[byte];
-			//bit_write(write_block[byte], carry_over, local_length);
+			reallign = code_length;
+			code_length = 0;
 		}
 	}
 	if(carry == true) //If their is a carry over after for the final encoded character copy it with null padding to the buffer
@@ -138,7 +178,7 @@ void Huffman::compress() //compress the original message
 		huffman_buffer[index] = 0; //add a null padded character to let us know this is the end of the huffman code
 	h_len = index; //record the length in charlist
 	
-	cout << "Done!" << endl;
+	cout << "Done compressing" << endl;
 }
 
 int Huffman::readHeader(string hfile)
@@ -197,6 +237,15 @@ void Huffman::populateHeader(string hfile,string fname) // Write the header
 	outf.close();
 }
 
+void Huffman::print_huffman()
+{
+	for(int i=0; i<h_len; i++)
+	{
+		cout << huffman_buffer[i];
+	}
+	cout << endl << "Length of huffman codeing = " << h_len << " characters" << endl;
+}
+
 void Huffman::test()
 {
 	unsigned char testsrc[16] {0X1, 0X3, 0X7, 0XF, 0X1F, 0X3F, 0X7F, 0XFF, 0X1, 0X2, 0X4, 0X8, 0X10, 0X20, 0X40, 0X80};
@@ -214,7 +263,7 @@ void Huffman::test()
 		assert(testdest == testsrc[i]);
 		testdest = 0;
 	}
-	cout << "bit_write test passed" << endl;
+	cout << "bit_write tests passed" << endl;
 	
 	for(int i=1; i<=64; i++) //test the ceiling function to calculate the byte
 	{
@@ -222,7 +271,14 @@ void Huffman::test()
 		if(i%8==0) test_byte --;
 		//cout << "i:" << i << " gb():" << get_byte(i) << " :test" << test_byte << endl;
 	}
-	cout << "get_byte test passed" << endl;
+	cout << "get_byte tests passed" << endl;
+
+ 	assert(get_offset(15) == 1);
+	assert(get_offset(12) == 4);
+	assert(get_offset(16) == 0);
+	assert(get_offset(1) == 7);
+	cout << "get_offset tests passed" << endl;	
+
 	cout << "Dumping file_buffer to file " << endl;
 	dump_buffer();
 }	

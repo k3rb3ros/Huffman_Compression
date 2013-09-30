@@ -27,6 +27,7 @@ int main(int argv, char **argc)
 	//huffman.print_encoding_table();
 	huffman.test();
 	huffman.compress();
+	huffman.print_huffman();
 	//huffman.populateHeader(hfile,fname);
 	//huffman.print_encoding_table();
 	//huffman.printBinary();
