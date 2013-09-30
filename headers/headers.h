@@ -13,8 +13,8 @@
 	#include <limits.h>
 	#include <math.h>
 	#include <stack>
-    	#include <stdio.h>
-	#include <vector>
+    #include <stdio.h>
+	#include <sstream>
 
 	using namespace std;
 
