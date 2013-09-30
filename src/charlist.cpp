@@ -13,7 +13,8 @@ CharList::CharList()
 	huffman_buffer = NULL;
 	charOccurrence = -1;
 	len = 0;
-	for(char i=0; i<CHAR_MAX; i++)
+	h_len = 0;
+	for(unsigned char i=0; i<UCHAR_MAX; i++)
 	{
 		charTable[i].active = false;
 		charTable[i].character = i;
@@ -21,7 +22,7 @@ CharList::CharList()
 		charTable[i].encoding = 0;
 		charTable[i].occurrence = 0;
 		charTable[i].buckets = NULL;
-		charSort[i] = (char*)&charTable[i]; //Initialize charSort to point to every index in charTable
+		charSort[i] = (unsigned char*)&charTable[i]; //Initialize charSort to point to every index in charTable
 		//cout << "Addr " << i+1 << " : " << &charSort[i] << ", ";
 	}
 }
@@ -29,9 +30,9 @@ CharList::CharList()
 void CharList::sortTable()
 {
 	cout << endl;
-	for(int i=0; i<CHAR_MAX; i++)
+	for(int i=0; i<UCHAR_MAX; i++)
 	{
-		for(int j=0; j<CHAR_MAX-1; j++)
+		for(int j=0; j<UCHAR_MAX-1; j++)
 		{
 		if((((CharNode*) &*(charSort[j])))->occurrence > (((CharNode*) &*(charSort[j+1])))->occurrence)
 			{
@@ -48,9 +49,9 @@ void CharList::delBuckets(CharBucket* buckets) //recursively delete any buckets 
 	delete buckets; 	
 }
 
-void CharList::swap(char* &a, char* &b)
+void CharList::swap(unsigned char* &a, unsigned char* &b)
 {
-	char* temp = NULL;
+	unsigned char* temp = NULL;
 	temp = a;
 	a = b;
 	b = temp;
@@ -65,8 +66,8 @@ void CharList::bufferFile(string fname)
 		{
 			in.seekg(0, in.end); //Go to end of stream
 			len = in.tellg(); //Get the length of the file
-			len -= EOF_LENGTH; //Subtract the length of the eof character
-			file_buffer = new char[len+1];
+			//len -= EOF_LENGTH; //Subtract the length of the eof character
+			file_buffer = new unsigned char[len+1];
 			file_buffer[len] = 0; //null terminate the string
 			in.seekg(0, in.beg); //Reset stream to beginning
 			in >> noskipws; //tell fstream not to ignore whitespace
@@ -95,17 +96,17 @@ void CharList::bufferFile(string fname)
 
 void CharList::populateTable()
 {
-	char ch = 0;
+	unsigned char ch = 0;
 	if(file_buffer != NULL)
 	{
 		for(unsigned int i=0; i<len; i++)
 		{
 			ch = file_buffer[i];
-			if(ch < 0 || ch > 128)
-			{
-				cerr << "invalid (standard range) ascii character encountered\n";
-			}
-			else if(charTable[ch].active == false)
+			//if(ch < 0 || ch > 255)
+			//{
+			//	cerr << "invalid (standard range) ascii character encountered\n";
+			//}
+			if(charTable[ch].active == false)
 			{
 				charTable[ch].active = true; //set this character to active
 				charTable[ch].occurrence = 1; //set occurance to 1
@@ -119,7 +120,7 @@ void CharList::populateTable()
 void CharList::showCharCount()
 {
 	cout << "Character Count:" << endl;
-	for(char i=0; i<CHAR_MAX; i++)
+	for(unsigned char i=0; i<UCHAR_MAX; i++)
 	{
 		if(charTable[i].active == true)
 		{
@@ -132,7 +133,7 @@ CharList::~CharList()
 {
 	if(file_buffer != NULL) delete[] file_buffer; //Free file_buffer
 	if(huffman_buffer != NULL) delete[] huffman_buffer; //Free hufmman_buffer
-	for(int i=0; i<CHAR_MAX; i++)
+	for(int i=0; i<UCHAR_MAX; i++)
 	{
 		delBuckets(charTable[i].buckets);
 	}

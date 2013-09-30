@@ -26,7 +26,8 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	string encoded_text;
 	string getMcpName(string);
 
-	void bit_write(char &src, char &dest, const short int bits);
+	void bit_write(unsigned char &src,unsigned char &dest, const short int bits);
+	void dump_buffer();
 	short int get_byte(int length);
 	string getLine(ifstream &inf, string delim);
 

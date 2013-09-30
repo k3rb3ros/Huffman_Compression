@@ -30,7 +30,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, Trie_node* New_node)
 	return knew_root;
 }
 
-Trie_node* Trie::insert_node(Trie_node* Root, char character, unsigned long int val)
+Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned long int val)
 {
 	Trie_node* knew_node = NULL;
 	Trie_node* knew_root = NULL;
@@ -64,7 +64,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, char character, unsigned long int 
 	return knew_root; //knew_root;
 }
 
-Trie_node* Trie::insert_2nodes(Trie_node* Root, char char1, unsigned long int val1, char char2, unsigned long int val2)
+Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned long int val1, unsigned char char2, unsigned long int val2)
 {
 	Trie_node* knew_root = NULL;
 	Trie_node* knew_left = NULL;
@@ -129,7 +129,7 @@ void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
 {
 	bool is_char = false;
 	//bool reallocate = false;
-	char ch = 0;
+	unsigned char ch = 0;
 	//CharBucket* bucket = NULL;
 	short int direction = 0;
 	int* code_length = NULL;
@@ -197,7 +197,7 @@ void Trie::print_binary(CharNode* Node)
 void Trie::printBinary(){
 	//unsigned long int temp = 0;
 	//int len = 0;
-	for(int i=0;i<CHAR_MAX;i++){
+	for(int i=0;i<UCHAR_MAX;i++){
 		//temp = charTable[i].encoding;
 		//len = charTable[i].encodeLength;
 		if(charTable[i].active == true)
@@ -243,11 +243,11 @@ unsigned long int Trie::size_of_trie() //Recursively count the number of nodes i
 void Trie::populate_trie() //Fills the trie data structure with sorted character and character occurences from the sort table
 {
 	bool even = false;
-	char char1 = 0;
-	char char2 = 0;
+	unsigned char char1 = 0;
+	unsigned char char2 = 0;
 	unsigned long int occur1 = 0;
 	unsigned long int occur2 = 0;
-	for(char h=0; h<CHAR_MAX; h++)//determine if there is an even or odd number of nodes
+	for(unsigned char h=0; h<UCHAR_MAX; h++)//determine if there is an even or odd number of nodes
 	{
 		if(charSort[h] > 0)
 		{
@@ -255,13 +255,13 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 			break;
 		}
 	} 
-	for(char i=0; i<CHAR_MAX; i++) 
+	for(unsigned char i=0; i<UCHAR_MAX; i++) 
 	{
 		char1 = (((CharNode*) &*(charSort[i]))->character);
 		occur1 = (((CharNode*) &*(charSort[i]))->occurrence);
 		if(occur1 > 0)
 		{
-			if(even && i < (CHAR_MAX-1)) //if there are an even number of nodes and we aren't at the end of the array then insert with insert2
+			if(even && i < (UCHAR_MAX-1)) //if there are an even number of nodes and we aren't at the end of the array then insert with insert2
 			{
 				char2 = (((CharNode*) &*(charSort[i+1]))->character);
 				occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
@@ -270,7 +270,7 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 			}
 			else
 			{
-				if(i < (CHAR_MAX-1))
+				if(i < (UCHAR_MAX-1))
 				{
 					char2 = (((CharNode*) &*(charSort[i+1]))->character);
 					occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
@@ -292,7 +292,7 @@ void Trie::get_encoding() //Recursively traverse to the character creating the b
 void Trie::print_encoding_table()
 {
 	cout << endl << "Encoding Table" << endl;
-	for(char i=0; i<CHAR_MAX; i++)
+	for(unsigned char i=0; i<UCHAR_MAX; i++)
 	{
 		if(charTable[i].active == true)
 		{
@@ -305,7 +305,7 @@ void Trie::print_encoding_table()
 
 void Trie::print_sort_table() //prints the active characters and their occurence in sorted order
 {
-	for(char l=0; l<CHAR_MAX; l++)
+	for(unsigned char l=0; l<UCHAR_MAX; l++)
         {
                 if(((CharNode*) &*(charSort[l]))->occurrence > 0)
                 {

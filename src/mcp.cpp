@@ -25,13 +25,13 @@ int main(int argv, char **argc)
 	cout << "Characters: " << huffman.character_count() << endl;
 	huffman.get_encoding();
 	//huffman.print_encoding_table();
-	//huffman.compress();
+	huffman.test();
+	huffman.compress();
 	//huffman.populateHeader(hfile,fname);
 	//huffman.print_encoding_table();
 	//huffman.printBinary();
-	huffman.test();
-	huffman.populateHeader(hfile,fname);
-	huffman.readHeader(hfile);
+	//huffman.populateHeader(hfile,fname);
+	//huffman.readHeader(hfile);
 	while(getchar() != '\n');
 	return 0;
 }

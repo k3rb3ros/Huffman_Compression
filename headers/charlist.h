@@ -15,17 +15,18 @@ class CharList
 {
 	private:	
 	friend class Huffman;
-	char* file_buffer;
-	char* huffman_buffer;
+	unsigned char* file_buffer;
+	unsigned char* huffman_buffer;
 	int charOccurrence;
 	unsigned long int len;
+	unsigned long int h_len;
 	void delBuckets(CharBucket* buckets);	
-	void swap(char* &a, char* &b);
+	void swap(unsigned char* &a, unsigned char* &b);
 	
 	protected:
 	
-	CharNode charTable[CHAR_MAX]; //Create a lookup table for every ascii character		
-	char* charSort[CHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
+	CharNode charTable[UCHAR_MAX]; //Create a lookup table for every ascii character		
+	unsigned char* charSort[UCHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
 
 	public:
 
