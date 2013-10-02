@@ -233,7 +233,7 @@ void Huffman::populateHeader(string hfile,string fname) // Write the header
 	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence;
 	outf << DELIM << DELIM << endl;
 	//for(int i=0;i<UCHAR_MAX;i++) outf << huffman_buffer[i]; // DON'T DELETE!!
-    outf << endl << O_EOF;
+    	outf << endl << O_EOF;
 	outf.close();
 }
 

@@ -106,9 +106,9 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 	knew_parent -> left = knew_left;
 	
 	if(Root -> val == NULL) //in the case this is the first node we are inserting
-	{	
+	{
+		delete knew_root;	
 		delete Root;
-		Root = NULL;
 		return knew_parent;
 	}
 	if((knew_parent -> val) >= (Root -> val))
