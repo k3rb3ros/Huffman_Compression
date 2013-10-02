@@ -14,6 +14,7 @@ CharList::CharList()
 	charOccurrence = -1;
 	len = 0;
 	h_len = 0;
+	table_len = 0;
 	for(unsigned char i=0; i<UCHAR_MAX; i++)
 	{
 		charTable[i].active = false;

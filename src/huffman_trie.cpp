@@ -7,36 +7,11 @@
 
 #include "../headers/huffman_trie.h"
 
-Trie_node* Trie::insert_node(Trie_node* Root, Trie_node* New_node)
-{
-	cout << "Insert1(node)" << endl;
-	Trie_node* knew_root = NULL;
-	
-	if(Root == NULL || New_node == NULL) return Root; //check for valid input and return otherwise
-	
-	knew_root = new Trie_node; //allocate the new node
-	knew_root -> is_character = false;
-	knew_root -> val = (Root -> val + New_node -> val);
-	knew_root -> character = 0;
-	if(Root -> val >= New_node -> val)
-	{
-		knew_root -> left = New_node;
-		knew_root -> right = Root;
-	}
-	else
-	{
-		knew_root -> left = Root;
-		knew_root -> right = New_node;
-	}
-	return knew_root;
-}
-
 Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned long int val)
 {
 	cout << "insert1(val)" << endl;
 	Trie_node* knew_node = NULL;
 	Trie_node* knew_root = NULL;
-	unsigned long int sum = 0;
 
 	if(Root == NULL) return Root;
 	
@@ -50,7 +25,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned 
 	knew_root = new Trie_node;
 	knew_root -> is_character = false;
 	knew_root -> character = 0;
-	knew_root -> val = sum + val;	
+	knew_root -> val = (root -> val) + val;	
 	
 	if((Root -> val) >= val) //insert new node to the left
 	{
@@ -70,6 +45,7 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 {
 	cout << "insert2(val)" << endl;
 	Trie_node* knew_root = NULL;
+	Trie_node* knew_parent = NULL;
 	Trie_node* knew_left = NULL;
 	Trie_node* knew_right = NULL;
 
@@ -80,16 +56,23 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 	knew_root -> is_character = false;
 	knew_root -> character = 0;
 	knew_root -> val = val1 + val2 + (Root -> val);
+	
 	knew_left = new Trie_node;
 	knew_left -> is_character = true;
 	knew_left -> left = NULL;
 	knew_left -> right = NULL;
+	
 	knew_right = new Trie_node;
 	knew_right -> is_character = true;
 	knew_right -> left = NULL;
 	knew_right -> right = NULL;
+	
+	knew_parent = new Trie_node;
+	knew_parent -> is_character = false;
+	knew_parent -> character = 0;
+	knew_parent -> val = val1 + val2;
 
-	if(char1 <= char2)
+	if(val1 >= val2)
 	{
 		knew_left -> character = char1;
 		knew_left -> val = val1;
@@ -104,11 +87,21 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 		knew_right -> val = val1;
 	}
 
-	//set the root to point to the knew children
-	knew_root -> left = knew_left;
-	knew_root -> right = knew_right;
+	//set the knew_parent to point to the new children
+	knew_parent -> left = knew_left;
+	knew_parent -> right = knew_right;
 	
-	return insert_node(Root, knew_root); //recursively insert the sub tree into root
+	if((knew_parent -> val) >= (Root -> val))
+	{
+		knew_root -> left = knew_parent;
+		knew_root -> right = Root;
+	}
+	else
+	{
+		knew_root -> left = Root;
+		knew_root -> right = knew_parent;
+	}
+	return knew_root; //recursively insert the sub tree into root
 }
 
 void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**

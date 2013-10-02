@@ -24,6 +24,7 @@ class CharList
 	void swap(unsigned char* &a, unsigned char* &b);
 	
 	protected:
+	short int table_len;
 	
 	CharNode charTable[UCHAR_MAX]; //Create a lookup table for every ascii character		
 	unsigned char* charSort[UCHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
