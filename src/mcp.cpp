@@ -12,7 +12,7 @@
 
 int main(int argv, char **argc)
 {	
-	string fname = "../text/us_constitution.txt";
+	string fname = "../text/test.txt";
 	string hfile = "header_output_test.txt";
 	Huffman huffman;
 	//example compress
@@ -27,10 +27,10 @@ int main(int argv, char **argc)
 	//huffman.print_encoding_table();
 	huffman.test();
 	huffman.compress();
-	huffman.print_huffman();
+	//huffman.print_huffman();
 	//huffman.populateHeader(hfile,fname);
 	//huffman.print_encoding_table();
-	//huffman.printBinary();
+	huffman.printBinary();
 	//huffman.populateHeader(hfile,fname);
 	//huffman.readHeader(hfile);
 	while(getchar() != '\n');
