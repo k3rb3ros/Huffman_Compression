@@ -40,6 +40,10 @@ void CharList::sortTable()
 			}
 		}
 	}
+	for(int i=0; i<UCHAR_MAX; i++)
+	{
+		if((((CharNode*) &*(charSort[i])))->occurrence) cout << "|" << (((CharNode*) &*(charSort[i])))->character << ":" << (((CharNode*) &*(charSort[i])))->occurrence << "| ";
+	}
 }
 
 void CharList::delBuckets(CharBucket* buckets) //recursively delete any buckets that have been added to charTable
