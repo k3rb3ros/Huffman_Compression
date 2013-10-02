@@ -9,6 +9,7 @@
 
 Trie_node* Trie::insert_node(Trie_node* Root, Trie_node* New_node)
 {
+	cout << "Insert1(node)" << endl;
 	Trie_node* knew_root = NULL;
 	
 	if(Root == NULL || New_node == NULL) return Root; //check for valid input and return otherwise
@@ -32,6 +33,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, Trie_node* New_node)
 
 Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned long int val)
 {
+	cout << "insert1(val)" << endl;
 	Trie_node* knew_node = NULL;
 	Trie_node* knew_root = NULL;
 	unsigned long int sum = 0;
@@ -66,6 +68,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned 
 
 Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned long int val1, unsigned char char2, unsigned long int val2)
 {
+	cout << "insert2(val)" << endl;
 	Trie_node* knew_root = NULL;
 	Trie_node* knew_left = NULL;
 	Trie_node* knew_right = NULL;

@@ -34,6 +34,7 @@ class CharList
 	void bufferFile(string fname); //Name changed so that it makes more sense
 	void bufferHuffman();
 	void populateTable();
+	void printSorted();
 	void showCharCount();
 	void sortTable();
 	~CharList(); //Destructor

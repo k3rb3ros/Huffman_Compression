@@ -18,8 +18,9 @@ int main(int argv, char **argc)
 	//example compress
 	huffman.bufferFile(fname);
 	huffman.populateTable();
-	huffman.showCharCount();
+	//huffman.showCharCount();
 	huffman.sortTable();
+	huffman.printSorted();
 	huffman.populate_trie();
 	cout << "Nodes: " << huffman.size_of_trie() << endl;
 	cout << "Characters: " << huffman.character_count() << endl;

@@ -29,7 +29,6 @@ CharList::CharList()
 
 void CharList::sortTable()
 {
-	cout << endl;
 	for(int i=0; i<UCHAR_MAX; i++)
 	{
 		for(int j=0; j<UCHAR_MAX-1; j++)
@@ -39,10 +38,6 @@ void CharList::sortTable()
 				swap(charSort[j], charSort[j+1]);
 			}
 		}
-	}
-	for(int i=0; i<UCHAR_MAX; i++)
-	{
-		if((((CharNode*) &*(charSort[i])))->occurrence) cout << "|" << (((CharNode*) &*(charSort[i])))->character << ":" << (((CharNode*) &*(charSort[i])))->occurrence << "| ";
 	}
 }
 
@@ -119,6 +114,16 @@ void CharList::populateTable()
 		}
 		cout << "Frequency Table succesfully populated" << endl;
 	}
+}
+
+void CharList::printSorted()
+{
+	cout << endl << "Sorted characters by count:" << endl;
+	for(int i=0; i<UCHAR_MAX; i++)
+	{
+		if((((CharNode*) &*(charSort[i])))->occurrence) cout << "|" << (((CharNode*) &*(charSort[i])))->character << ":" << (((CharNode*) &*(charSort[i])))->occurrence << "| ";
+	}
+	cout << endl;
 }
 
 void CharList::showCharCount()
