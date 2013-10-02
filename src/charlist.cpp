@@ -102,14 +102,11 @@ void CharList::populateTable()
 		for(unsigned int i=0; i<len; i++)
 		{
 			ch = file_buffer[i];
-			//if(ch < 0 || ch > 255)
-			//{
-			//	cerr << "invalid (standard range) ascii character encountered\n";
-			//}
 			if(charTable[ch].active == false)
 			{
 				charTable[ch].active = true; //set this character to active
-				charTable[ch].occurrence = 1; //set occurance to 1
+				charTable[ch].occurrence = 1; //set occurance to 1				
+				table_len++; //incriment table length
 			}
 			else charTable[ch].occurrence ++;
 		}

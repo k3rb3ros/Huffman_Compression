@@ -17,14 +17,13 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 	private:
 
 	Trie_node* root;
-	Trie_node* insert_node(Trie_node* Root, Trie_node* New_node);
 	Trie_node* insert_node(Trie_node* Root, unsigned char character, unsigned long int val);
 	Trie_node* insert_2nodes(Trie_node* Root, unsigned char char1, unsigned long int val1, unsigned char char2, unsigned long int val2);
 	unsigned long int char_count;
 	unsigned long int node_count;
 	void count_traverse(Trie_node* Root);
 	void delete_trie(Trie_node* Root);
-	void enc_traverse(Trie_node* Root, stack<int> huffman);
+	void enc_traverse(Trie_node* Root, unsigned long int bit, unsigned long int bitcode, int length);
 	void node_traverse(Trie_node* Root);
 	void print_binary(CharNode* node);
 	unsigned long int sum_nodes(Trie_node* Root, unsigned long int sum);

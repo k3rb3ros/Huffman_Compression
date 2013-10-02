@@ -9,7 +9,6 @@
 
 Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned long int val)
 {
-	cout << "insert1(val)" << endl;
 	Trie_node* knew_node = NULL;
 	Trie_node* knew_root = NULL;
 
@@ -43,7 +42,6 @@ Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned 
 
 Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned long int val1, unsigned char char2, unsigned long int val2)
 {
-	cout << "insert2(val)" << endl;
 	Trie_node* knew_root = NULL;
 	Trie_node* knew_parent = NULL;
 	Trie_node* knew_left = NULL;
@@ -101,7 +99,7 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 		knew_root -> left = Root;
 		knew_root -> right = knew_parent;
 	}
-	return knew_root; //recursively insert the sub tree into root
+	return knew_root;
 }
 
 void Trie::count_traverse(Trie_node* Root) //Recursively count the number of characters represented in the try **FOR DEBUGGING PURPOSES**
@@ -121,53 +119,45 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 	Root = NULL; //set the pointer to Null to prevent any confusion that Root has been erased
 }
 
-void Trie::enc_traverse(Trie_node* Root, stack<int> huffman)
+void Trie::enc_traverse(Trie_node* Root, unsigned long int bit, unsigned long int bitcode, int length) //Recursively traverse the Trie and get the bitcode for ever active character
 {
 	bool is_char = false;
-	//bool reallocate = false;
-	unsigned char ch = 0;
-	//CharBucket* bucket = NULL;
-	short int direction = 0;
 	int* code_length = NULL;
+	short int direction = 0;
+	unsigned char ch = 0;
 	unsigned long int* code = NULL;
+
 	if(Root == NULL) return;
+	
+	if(bit >= 0 && bit <= 1 && length <= 64) // if we have recursed at least 1 level deep
+	{	
+		bitcode <<= 1;
+		bitcode |= bit;
+		length ++;
+	}		
+	else if(length > 64) 
+	{
+		cerr << "Unsigned long int overflow error, cannot continue" << endl;
+	}
+	
 	is_char = Root -> is_character;
 	ch = Root -> character;
+	
 	if(Root -> left != NULL)
 	{
-		huffman.push(0);
-		enc_traverse(Root -> left, huffman);
+		enc_traverse(Root -> left, 0, bitcode, length);
 	}
 	if(Root -> right != NULL)
 	{
-		huffman.push(1);
-		enc_traverse(Root -> right, huffman);
+		enc_traverse(Root -> right, 1, bitcode, length);
 	}
 	if(is_char == true)//if node represents a character in our trie
 	{
 		ch = Root -> character; //Keep track of the character to look it up in our look up table
 		code = &(charTable[ch].encoding); //Create a pointer to where the characters encoding is stored in the charTable
 		code_length = &(charTable[ch].encodeLength); //Create a point to where the characters encoding length is stored in the charTable
-		
-		int temp = 0;/*DEBUG*/
-		while(!huffman.empty())
-		{
-			direction = huffman.top(); //get the 0 or 1 on the top of the stack
-			huffman.pop(); //pop it off the stack
-			if((*(code_length) & 0x8000000000000000) == 0x8000000000000000) //if we are about to overflow our long unsigned int (small endian only)
-			{
-				cerr << "bitcode not exectuting" << endl;
-				//FIXME
-			}
-			else
-			{
-				*(code) = *(code) | direction; //Add the least significant bit to the buffer 
-				*(code) = *(code) << 1; //bitshift whatever is in the buffer to the left by 1 bit
-				temp ++;
-				(*code_length) ++;
-			}
-		}
-		//cout << "Code for \"" << ch << "\":" << hex << *(code) << dec << " " << temp << endl;
+		*(code) = bitcode; //set the bitcode
+		*(code_length) = length; //set the code length
 	}
 
 }
@@ -243,24 +233,17 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 	unsigned char char2 = 0;
 	unsigned long int occur1 = 0;
 	unsigned long int occur2 = 0;
-	for(unsigned char h=0; h<UCHAR_MAX; h++)//determine if there is an even or odd number of nodes
-	{
-		if(charSort[h] > 0)
-		{
-			if(h%2 == 0) even = true;
-			break;
-		}
-	} 
-	for(unsigned char i=0; i<UCHAR_MAX; i++) 
+	
+	if(table_len %2 == 0) even = true; 
+	for(unsigned char i=(UCHAR_MAX-table_len); i<UCHAR_MAX; i++) 
 	{
 		char1 = (((CharNode*) &*(charSort[i]))->character);
 		occur1 = (((CharNode*) &*(charSort[i]))->occurrence);
-		if(occur1 > 0)
-		{
-			if(even && i < (UCHAR_MAX-1)) //if there are an even number of nodes and we aren't at the end of the array then insert with insert2
+			if(even) //if there are an even number of nodes we can insert the entire trie with insert2
 			{
 				char2 = (((CharNode*) &*(charSort[i+1]))->character);
 				occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
+				cout << "inserting (" << occur1 << ", " << occur2 << ")" << endl;
 				root = insert_2nodes(root, char1, occur1, char2, occur2);
 				i++; //increment i so that we don't double insert a node
 			}
@@ -270,19 +253,22 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 				{
 					char2 = (((CharNode*) &*(charSort[i+1]))->character);
 					occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
+					cout << "inserting (" << occur1 << ", " << occur2 << ")" << endl;
 					root = insert_2nodes(root, char1, occur1, char2, occur2);
 					i++; //increment i so that we don't double insert a node
 				}
-				else root = insert_node(root, char1, occur1);
+				else 
+				{
+					cout << "inserting (" << occur1 << ")" << endl;
+					root = insert_node(root, char1, occur1); //insert the last node with insert1
+				}
 			}
-		}
 	}
 }
 
 void Trie::get_encoding() //Recursively traverse to the character creating the bitstring encoding based on left and right traversals
-{	
-	stack<int> code;
-	enc_traverse(root, code);	
+{
+	enc_traverse(root, -1, 0, 0);	
 }
 
 void Trie::print_encoding_table()
