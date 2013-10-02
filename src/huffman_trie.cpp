@@ -7,6 +7,17 @@
 
 #include "../headers/huffman_trie.h"
 
+Trie::Trie() //Constructor inits root node
+{
+	char_count = 0;
+	node_count = 0;
+	root = new Trie_node;
+	root -> is_character = false;
+	root -> val = 0;
+	root -> left = NULL;
+	root -> right = NULL;
+}
+
 Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned long int val)
 {
 	Trie_node* knew_node = NULL;
@@ -25,7 +36,12 @@ Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned 
 	knew_root -> is_character = false;
 	knew_root -> character = 0;
 	knew_root -> val = (root -> val) + val;	
-	
+
+	if(Root -> val == 0) //if this is the first insertion delete Root so that we don't have an extra unpopulated node
+	{	
+		delete Root;
+		Root == NULL;
+	}
 	if((Root -> val) >= val) //insert new node to the left
 	{
 		knew_root -> left = knew_node;
@@ -53,7 +69,7 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 	knew_root = new Trie_node;
 	knew_root -> is_character = false;
 	knew_root -> character = 0;
-	knew_root -> val = val1 + val2 + (Root -> val);
+	knew_root -> val = (val1 + val2 + (Root -> val));
 	
 	knew_left = new Trie_node;
 	knew_left -> is_character = true;
@@ -68,7 +84,7 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 	knew_parent = new Trie_node;
 	knew_parent -> is_character = false;
 	knew_parent -> character = 0;
-	knew_parent -> val = val1 + val2;
+	knew_parent -> val = (val1 + val2);
 
 	if(val1 >= val2)
 	{
@@ -78,7 +94,7 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 		knew_right -> val = val2;
 	}
 	else
-	{
+	{	
 		knew_left -> character = char2;
 		knew_left -> val = val2;
 		knew_right -> character = char1;
@@ -86,9 +102,15 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 	}
 
 	//set the knew_parent to point to the new children
-	knew_parent -> left = knew_left;
 	knew_parent -> right = knew_right;
+	knew_parent -> left = knew_left;
 	
+	if(Root -> val == NULL) //in the case this is the first node we are inserting
+	{	
+		delete Root;
+		Root = NULL;
+		return knew_parent;
+	}
 	if((knew_parent -> val) >= (Root -> val))
 	{
 		knew_root -> left = knew_parent;
@@ -203,17 +225,6 @@ unsigned long int Trie::sum_nodes(Trie_node* Root, unsigned long int sum)
 	return sum;
 }
 
-Trie::Trie() //Constructor inits root node
-{
-	char_count = 0;
-	node_count = 0;
-	root = new Trie_node;
-	root -> is_character = false;
-	root -> val = 0;
-	root -> left = NULL;
-	root -> right = NULL;
-}
-
 unsigned long int Trie::character_count() //Recursively count the number of characters represented by the Trie **FOR DEBUGGING**
 {
 	count_traverse(root);
@@ -243,7 +254,6 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 			{
 				char2 = (((CharNode*) &*(charSort[i+1]))->character);
 				occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
-				cout << "inserting (" << occur1 << ", " << occur2 << ")" << endl;
 				root = insert_2nodes(root, char1, occur1, char2, occur2);
 				i++; //increment i so that we don't double insert a node
 			}
@@ -253,13 +263,11 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 				{
 					char2 = (((CharNode*) &*(charSort[i+1]))->character);
 					occur2 = (((CharNode*) &*(charSort[i+1]))->occurrence);
-					cout << "inserting (" << occur1 << ", " << occur2 << ")" << endl;
 					root = insert_2nodes(root, char1, occur1, char2, occur2);
 					i++; //increment i so that we don't double insert a node
 				}
 				else 
 				{
-					cout << "inserting (" << occur1 << ")" << endl;
 					root = insert_node(root, char1, occur1); //insert the last node with insert1
 				}
 			}

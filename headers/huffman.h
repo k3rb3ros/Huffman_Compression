@@ -15,7 +15,7 @@
 
 #define MAGIC_NUMBER 0x63130
 #define DELIM "\1\27"
-#define H_BUF 3*len
+#define H_BUF 2*len
 #define O_EOF '\26'
 
 

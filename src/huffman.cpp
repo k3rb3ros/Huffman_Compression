@@ -125,7 +125,7 @@ void Huffman::compress() //compress the original message
 		}
 		else //write the first few bits to byte left over from the previous encoding
 		{
-			index++;
+			//index++;
 			reallign = get_bit(reallign, code_length);	//figure out the spacing between the last bit code and next one
 			if(reallign <0) //if there is extra space adjust the bitcode left
 			{
@@ -176,7 +176,7 @@ void Huffman::compress() //compress the original message
 		huffman_buffer[index++] = carry_over;
 	}
 		huffman_buffer[index] = 0; //add a null padded character to let us know this is the end of the huffman code
-	h_len = index; //record the length in charlist
+		h_len = index; //record the length in charlist
 	
 	cout << "Done compressing" << endl;
 }
