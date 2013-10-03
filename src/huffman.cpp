@@ -11,6 +11,7 @@ Huffman::Huffman()
 	file_to_compress = "";
 	header_table = "";
 	encoded_text = "";
+	
 }
 
 void Huffman::bit_write(unsigned char &src, unsigned char &dest, const short int bits) //write the number of bits passed into the function from unsigned char src to unsigned char dest
@@ -181,17 +182,59 @@ void Huffman::compress() //compress the original message
 	cout << "Done compressing" << endl;
 }
 
+void Huffman::deleteVector(vector<string> mylist)
+{
+	mylist.erase (mylist.begin(),mylist.end());
+}
+
+double Huffman::compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count)
+{
+	percent_compressed = (compressed_count / uncompressed_count) * 100; 
+	return percent_compressed;
+}
+
+void Huffman::table_char_count(string table)
+{	
+	string temp_str;
+	string str;
+	int temp_num=0;
+	
+	//insert the characters and their counts into a vector in order to split them from the string
+	for(int i=0; i< table.length();i++)
+	{
+		if(table[i]!= ' ') temp_str += table[i];
+		if(table[i]== ' ')
+		{
+			i++;
+			mylist.push_back (temp_str);
+			temp_str="";
+		}	
+	}
+	//convert every other element in the array back into an integer and add them up
+	for(int j=0; j < mylist.size(); j++)
+		if (j%2 == 1)
+		{
+			temp_num += atoi(mylist[j].c_str());	
+		}
+		cout << "Characters in table: " << temp_num << endl;
+}
+
 int Huffman::readHeader(string hfile)
 {
-	int num;
 	int i=0;
-	int f_len = hfile.size();
-	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
-	string m_number;
-	string f_name;
-	string table;
-	string e_o_f;
+	int num; // used for conversion purposes
+	string tableFile = "tableFile.txt";
+	bool done = false;
+	ofstream out(tableFile.c_str()); //stores the table in a file in case we need it
+	string m_number; // magic number
+	string f_name;  // file to decompress 
+	string table=""; //table of characters and their occurences
+	string compressed_data;
+	char t_char; // used to read 
+	string e_o_f; // end of file character
+	string double_delim = "\1\27\1\27"; //used to detect the end of table
 	ifstream inf(hfile.c_str());
+	
 	if(!inf) cout << "Error reading file..." << endl;
 	else 
 	{
@@ -199,29 +242,43 @@ int Huffman::readHeader(string hfile)
     
 		//sstream conversion found here: http://www.cplusplus.com/forum/articles/9645/
 		stringstream convert(m_number); // stringstream used for the conversion initialized with the contents of the string
-		if ( !(convert >> num) )//give the value to an integer using the characters in the string
+		if (!(convert >> num))//give the value to an integer using the characters in the string
 		{
 			cout << "Not a valid compressed file. Exiting..." << endl;
 			return -1;
 		}
-		else cout << " Magic number matches!" << endl;		
 		getline(inf,f_name);
-		cout << "Original file: " << f_name << endl;
-		//getline(inf,table);	
-		//cout << " Table: " << endl << table;
-		for (int i=0;i<UCHAR_MAX;i++) // trouble reading in table with getline and double delimiter ... 762 retrieves complete table.
-		{			
-			inf >> table[i];
-			if(table[i]=='ª' && table[i+1] == '«')
-			{
-				i+=2;
-				cout << ' ';
+
+		//extract table data from header file
+		while(!done)
+		{
+			inf.get(t_char);
+			table+=t_char;
+			//make a string comparison with the last four characters in the array in order to break the loop.
+			if(i++ > 4 && table.compare(table.length()-4,4,double_delim)==0) done=true;
+		}
+		i=0;
+
+		//remove delimiters from table and replace them with white space 
+		while(i!=table.length())
+		{
+			t_char=table[i];
+			if(t_char=='\1' || t_char=='\27')
+			{	
+				table[i]=' ';		
 			}
-			cout << table[i];
 			i++;
-		} 
+		}
+		out << table;
+		table_char_count(table);
+		out.close();
+		
+		/********************************************/
+		/* TODO:  getline(inf,compressed_data);     */
+		/********************************************/
+
 		getline(inf, e_o_f);
-		cout  << endl  << "eof: " << e_o_f; // not working...
+		cout  << endl  << "eof: " << e_o_f;
 	}
 	return 0;
 }
@@ -229,13 +286,14 @@ int Huffman::readHeader(string hfile)
 void Huffman::populateHeader(string hfile,string fname) // Write the header
 {
 	ofstream outf(hfile.c_str());
-	outf << MAGIC_NUMBER << endl << fname << endl;
-	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence;
+	outf << MAGIC_NUMBER << endl << fname<<endl;
+	for(int i=0; i<CHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence << ' ';
 	outf << DELIM << DELIM << endl;
-	//for(int i=0;i<UCHAR_MAX;i++) outf << huffman_buffer[i]; // DON'T DELETE!!
-    	outf << endl << O_EOF;
+	//for(int i=0;i<CHAR_MAX;i++) outf << huffman_buffer[i]; // DON'T DELETE!! Needed for writing encoded text to header file...
+    outf << O_EOF;
 	outf.close();
 }
+
 
 void Huffman::print_huffman()
 {

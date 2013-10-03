@@ -26,6 +26,7 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	string header_table;
 	string encoded_text;
 	string getMcpName(string);
+	vector<string> mylist;
 
 	void bit_write(unsigned char &src,unsigned char &dest, const short int bits);
 	void dump_buffer();
@@ -40,6 +41,12 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	int readHeader(string hfile);
 	void populateHeader(string hfile,string fname);
 	void print_huffman();
+	
+	double compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count);
+	void deleteVector(vector<string> mylist);
+	void table_char_count(string table);
+
+	
 	void test();
 	~Huffman();
 };

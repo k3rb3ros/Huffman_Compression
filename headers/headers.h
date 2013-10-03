@@ -15,7 +15,8 @@
 	#include <stack>
     #include <stdio.h>
 	#include <sstream>
-
+	#include <vector>
+	#include <stdlib.h>
 	using namespace std;
 
 	#define EOF_LENGTH 2
