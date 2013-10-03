@@ -14,6 +14,8 @@
 #include "structs.h"
 
 #define MAGIC_NUMBER 0x63130
+#define MAX_BIT_SIZE sizeof(unsigned long int)*8
+#define U_LONG_INT_SIZE sizeof(unsigned long int)
 #define DELIM "\1\27"
 #define H_BUF 2*len
 #define O_EOF '\26'
@@ -29,11 +31,12 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	vector<string> mylist;
 
 	void bit_write(unsigned char &src,unsigned char &dest, const short int bits);
-	void dump_buffer();
 	short int get_bit(int l_carry, short int length);
 	short int get_byte(int length);
 	short int get_offset(int length);
-	string getLine(ifstream &inf, string delim);
+	void dump_buffer();
+	bool getbit(unsigned long int* buffer, short int offset);
+	void setbit(unsigned char* buffer,int index, short int offset, bool value);
 
 	public:
 	Huffman();
@@ -45,8 +48,6 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	double compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count);
 	void deleteVector(vector<string> mylist);
 	void table_char_count(string table);
-
-	
 	void test();
 	~Huffman();
 };

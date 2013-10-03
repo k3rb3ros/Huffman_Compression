@@ -141,10 +141,10 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 	Root = NULL; //set the pointer to Null to prevent any confusion that Root has been erased
 }
 
-void Trie::enc_traverse(Trie_node* Root, unsigned long int bit, unsigned long int bitcode, int length) //Recursively traverse the Trie and get the bitcode for ever active character
+void Trie::enc_traverse(Trie_node* Root, unsigned long int bit, unsigned long int bitcode, short int length) //Recursively traverse the Trie and get the bitcode for ever active character
 {
 	bool is_char = false;
-	int* code_length = NULL;
+	short int* code_length = NULL;
 	short int direction = 0;
 	unsigned char ch = 0;
 	unsigned long int* code = NULL;

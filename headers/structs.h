@@ -19,7 +19,7 @@ struct CharNode //Structure used for CharTable will be shared with Trie class
 	bool active;
 	unsigned char character;	
 	CharBucket* buckets;
-	int encodeLength;	
+	short int encodeLength;	
 	unsigned long int encoding;
 	unsigned long int occurrence;
 };

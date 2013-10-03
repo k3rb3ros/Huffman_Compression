@@ -12,7 +12,7 @@
 
 int main(int argv, char **argc)
 {	
-	string fname = "../text/us_constitution.txt";
+	string fname = "../text/test.txt";
 	string hfile = "header_output_test.txt";
 	Huffman huffman;
 	//example compress
@@ -25,15 +25,14 @@ int main(int argv, char **argc)
 	cout << "Nodes: " << huffman.size_of_trie() << endl;
 	cout << "Characters: " << huffman.character_count() << endl;
 	huffman.get_encoding();
-	//huffman.print_encoding_table();
-	//huffman.test();
-	//huffman.compress();
+	huffman.test();
+	//huffman.populateHeader(hfile,fname);
+	huffman.print_encoding_table();
+	huffman.printBinary();
+	huffman.compress();
 	huffman.print_huffman();
 	//huffman.populateHeader(hfile,fname);
-	//huffman.print_encoding_table();
-	huffman.printBinary();
-	huffman.populateHeader(hfile,fname);
-	huffman.readHeader(hfile);
+	//huffman.readHeader(hfile);
 	while(getchar() != '\n');
 	return 0;
 }
