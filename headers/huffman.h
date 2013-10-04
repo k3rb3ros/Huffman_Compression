@@ -17,7 +17,7 @@
 #define MAX_BIT_SIZE sizeof(unsigned long int)*8
 #define U_LONG_INT_SIZE sizeof(unsigned long int)
 #define DELIM "\1\27"
-#define H_BUF 2*len
+#define H_BUF len
 #define O_EOF '\26'
 
 

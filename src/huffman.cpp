@@ -52,7 +52,7 @@ void Huffman::dump_buffer()
 }
 
 /* Created with the help of Dr. MacEvoy */
-bool Huffman::getbit(unsigned long int* buffer, short int offset)
+bool Huffman::getbit(unsigned long int* buffer, short int offset)//get the bit value at byte[offset] starting at the right wiht least significant bit
 {
 	unsigned long int mask = 0;
 	if(offset >= MAX_BIT_SIZE) return false;
@@ -60,12 +60,12 @@ bool Huffman::getbit(unsigned long int* buffer, short int offset)
 	return (*buffer & mask) != 0;
 }
 
-void Huffman::setbit(unsigned char* buffer, int index, short int offset, bool value)
+/* Created with the help of Dr. MacEvoy */
+void Huffman::setbit(unsigned char* buffer, int index, short int offset, bool value) 
 {
 	unsigned long int mask = 0;
-	offset = offset % 8; //wrap the bits around
 	if(offset >= MAX_BIT_SIZE) return;
-	mask = (1 << (offset % 8));
+	mask = (0x80 >> ((offset % 8)-1));
 	if(value) buffer[index] |= mask;
 }
 
@@ -111,12 +111,14 @@ void Huffman::compress() //compress the original message
 		ch = file_buffer[i]; //get the character we are encoding
 		bit_code = &charTable[ch].encoding; //look up its bit_code
 		code_length = charTable[ch].encodeLength; //look up the length (in bits) of the bitcode
-		for(unsigned short int j=0; j<(code_length); j++)
+		
+		for(short int j=code_length-1; j>=0; j--)
 		{
 			setbit(huffman_buffer, index, bit_count++ , getbit(bit_code, j)); //write the bitcodes to the buffer
 			if(bit_count%8 == 0) index++;
 		}
 	}
+	if(huffman_buffer[index] != 0) huffman_buffer[index++]; //nullpad the buffer if it isn't already
 	h_len = index+1; //index; //return the length of the huffman trie in bytes
 }
 
@@ -168,17 +170,17 @@ int Huffman::readHeader(string hfile)
 void Huffman::populateHeader(string hfile,string fname) // Write the header
 {
 	ofstream outf(hfile.c_str());
-	outf << MAGIC_NUMBER << endl << fname << endl;
-	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence;
-	outf << DELIM << DELIM << endl;
-	//for(int i=0;i<UCHAR_MAX;i++) outf << huffman_buffer[i]; // DON'T DELETE!!
-    	outf << endl << O_EOF;
-	outf.close();
+	outf << MAGIC_NUMBER << endl; //write magic number
+	outf << fname << endl; //Write file name
+	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence << DELIM << DELIM; //Write char table and int with with double delimiter
+	for(int i=0;i<h_len;i++) outf << huffman_buffer[i]; //write encoded test
+    	outf << endl << O_EOF; //write our "Output" EOF character
+	outf.close(); //close the filestream
 }
 
 void Huffman::print_huffman()
 {
-	for(unsigned int i=0; i<4; i++)
+	for(unsigned int i=0; i<h_len; i++)
 	{
 		cout << "\\" <<  (int)huffman_buffer[i];
 	}
@@ -187,46 +189,6 @@ void Huffman::print_huffman()
 
 void Huffman::test()
 {
-	unsigned char testsrc[16] {0X1, 0X3, 0X7, 0XF, 0X1F, 0X3F, 0X7F, 0XFF, 0X1, 0X2, 0X4, 0X8, 0X10, 0X20, 0X40, 0X80};
-	unsigned char testdest = 0;
-	short int bits = 0;
-	short int test_byte  = 7;
-	for(int i=0; i<16; i++) //test bit_write
-	{
-		if(i<8) bits = (i+1);
-		else bits = (i+1)-8;
-		bit_write(testsrc[i], testdest, bits);
-		//cout << dec << "bits written = " << bits << endl;
-		//cout << hex << "testsrc = 0x" << (int)testsrc[i] << endl;
-		//cout << hex << "testdest = 0x" << (int)testdest << endl;	
-		assert(testdest == testsrc[i]);
-		testdest = 0;
-	}
-	cout << "bit_write tests passed" << endl;
-	
-	for(int i=1; i<=64; i++) //test the ceiling function to calculate the byte
-	{
-		assert(get_byte(i) == test_byte);
-		if(i%8==0) test_byte --;
-		//cout << "i:" << i << " gb():" << get_byte(i) << " :test" << test_byte << endl;
-	}
-	cout << "get_byte tests passed" << endl;
-
- 	assert(get_offset(15) == 1);
-	assert(get_offset(12) == 4);
-	assert(get_offset(16) == 0);
-	assert(get_offset(1) == 7);
-	cout << "get_offset tests passed" << endl;
-
-	assert(get_bit(2, 15) == 1);
-	assert(get_bit(4, 12) == 0);
-	assert(get_bit(2, 14) == 0);
-	assert(get_bit(5, 15) == 4);
-	assert(get_bit(2, 10) == -4);	
-	cout << "get_bit tests passed" << endl;
-	
-	cout << "Dumping file_buffer to file " << endl;
-	dump_buffer();
 }	
 
 Huffman::~Huffman() //Destructor deletes entire header
