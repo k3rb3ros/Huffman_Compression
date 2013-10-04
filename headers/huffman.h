@@ -42,7 +42,7 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	void compress();
 	void decompress();
 	int readHeader(string hfile);
-	void populateHeader(string hfile,string fname);
+	void populateHeader(string h_name);
 	void print_huffman();
 	
 	double compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count);
