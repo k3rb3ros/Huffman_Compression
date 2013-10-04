@@ -12,7 +12,7 @@
 
 int main(int argv, char **argc)
 {	
-	string fname = "../text/test.txt";
+	string fname = "../text/us_constitution.txt";
 	string hfile = "header_output_test.txt";
 	Huffman huffman;
 	//example compress

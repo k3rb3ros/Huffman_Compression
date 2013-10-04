@@ -90,7 +90,15 @@ short int Huffman::get_offset(int length)
 
 string getMcpName(string fname)
 {
-	return "";
+	int i=0;
+	string str = fname;
+	while (str[i] != '.') i++;
+	if(str[i] == '.' && str[i+1] == 'm' && str[i+2] == 'c' && str[i+3] == 'p')
+	{
+		cout << "Valid compression file." << endl; 
+	}	
+	else cout << "Not a valid compressed file. Exiting..." << endl;
+	return str;
 }
 
 void Huffman::compress() //compress the original message
@@ -122,18 +130,78 @@ void Huffman::compress() //compress the original message
 	h_len = index+1; //index; //return the length of the huffman trie in bytes
 }
 
+void Huffman::table_char_count(string table)
+{	
+	string temp_str;
+	string str;
+	int temp_num=0;
+	
+	//insert the characters and their counts into a vector in order to split them from the string
+	for(int i=0; i< table.length();i++)
+	{
+		if(table[i]!= ' ') temp_str += table[i];
+		if(table[i]== ' ')
+		{
+			i++;
+			mylist.push_back (temp_str);
+			temp_str="";
+		}	
+	}
+	//convert every other element in the array back into an integer and add them up
+	for(int j=0; j < mylist.size(); j++)
+		if (j%2 == 1)
+		{
+			temp_num += atoi(mylist[j].c_str());	
+		}
+		cout << "Characters in table: " << temp_num << endl;
+}
+
+void Huffman::deleteVector(vector<string> mylist)
+{
+	mylist.erase (mylist.begin(),mylist.end());
+}
+
+double Huffman::compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count)
+{
+	percent_compressed = (compressed_count / uncompressed_count) * 100; 
+	return percent_compressed;
+}
+
+string setMcpName(string fname)
+{
+	int i=0;
+	string temp;
+	while (!fname.length())
+	{	
+		if(fname[i] == '.') 
+		{
+			fname[i+1]='m';
+			fname[i+1]='c';
+			fname[i+1]='p';
+		}
+		i++;
+	}
+	cout << "temp = " << temp << endl;
+	return temp = fname;
+}
+
 int Huffman::readHeader(string hfile)
 {
 	int num;
 	int i=0;
 	int f_len = hfile.size();
-	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
+	bool done = false;
+	//	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
+	char t_char;
+	string tableFile = "tableFile.txt";
 	string m_number;
 	string f_name;
 	string table;
+	string double_delim = "\1\27\1\27";
 	string enc_text;
 	string e_o_f;
 	ifstream inf(hfile.c_str());
+	ofstream out(tableFile.c_str());
 	if(!inf) cout << "Error reading file..." << endl;
 	else 
 	{
@@ -146,24 +214,38 @@ int Huffman::readHeader(string hfile)
 			cout << "Not a valid compressed file. Exiting..." << endl;
 			return -1;
 		}
-		else cout << " Magic number matches!" << endl;		
+		else cout << " Magic number matches!" << endl;	
+		
 		getline(inf,f_name);
 		cout << "Original file: " << f_name << endl;
-		//getline(inf,table);	
-		//cout << " Table: " << endl << table;
-		for (int i=0;i<UCHAR_MAX;i++) // trouble reading in table with getline and double delimiter ... 762 retrieves complete table.
-		{			
-			inf >> table[i];
-			if(table[i]=='ª' && table[i+1] == '«')
-			{
-				i+=2;
-				cout << ' ';
+		getline(inf,table);	
+		cout << " Table: " << endl << table;
+		//extract table data from header file
+		while(!done)
+		{
+			inf.get(t_char);
+			table+=t_char;
+			//make a string comparison with the last four characters in the array in order to break the loop.
+			if(i++ > 4 && table.compare(table.length()-4,4,double_delim)==0) done=true;
+		}
+		i=0;
+
+		//remove delimiters from table and replace them with white space 
+		while(i!=table.length())
+		{
+			t_char=table[i];
+			if(t_char=='\1' || t_char=='\27')
+			{	
+				table[i]=' ';		
 			}
-			cout << table[i];
 			i++;
-		} 
+		}
+		out << table;
+		table_char_count(table);
+		out.close();
+		
 		getline(inf,enc_text);
-		cout << endl << "enc_text = "  << enc_text << endl;
+	//	cout << endl << "enc_text = "  << enc_text << endl;
 		getline(inf, e_o_f);
 		cout  << endl  << "eof: " << e_o_f;
 	}
@@ -176,12 +258,18 @@ void Huffman::populateHeader(string hfile,string fname) // Write the header
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << fname << endl; //Write file name
 
-	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence ;
-	outf << DELIM << DELIM << endl; //Write char table and int with with double delimiter
+	//Write char table and int with with double delimiter
+	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence << ' ' ;
+	outf << DELIM << DELIM << endl; 
 
-	for(int i=0;i<h_len;i++) outf << huffman_buffer[i]; //write encoded test
-		outf << endl;
-    	outf << O_EOF; //write our "Output" EOF character
+	//Write encoded text to header file
+	for(int i=0;i<h_len;i++)
+	{
+		outf << huffman_buffer[i];
+	}
+	outf << endl;
+	
+	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
 }
 
@@ -189,7 +277,7 @@ void Huffman::print_huffman()
 {
 	for(unsigned int i=0; i<h_len; i++)
 	{
-		cout << "\\" <<  (int)huffman_buffer[i];
+		//cout << "\\" <<  (int)huffman_buffer[i];
 	}
 	cout << endl << "Length of huffman codeing = " << h_len << " characters" << endl;
 }
