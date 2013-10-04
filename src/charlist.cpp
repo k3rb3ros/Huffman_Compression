@@ -9,7 +9,7 @@
 
 CharList::CharList()
 {
-	file_buffer = NULL;
+	message_buffer = NULL;
 	huffman_buffer = NULL;
 	charOccurrence = -1;
 	len = 0;
@@ -34,7 +34,7 @@ void CharList::sortTable()
 	{
 		for(int j=0; j<UCHAR_MAX-1; j++)
 		{
-		if((((CharNode*) &*(charSort[j])))->occurrence > (((CharNode*) &*(charSort[j+1])))->occurrence)
+		if(((CharNode*) &*(charSort[j]))->occurrence > ((CharNode*) &*(charSort[j+1]))->occurrence)
 			{
 				swap(charSort[j], charSort[j+1]);
 			}
@@ -57,51 +57,90 @@ void CharList::swap(unsigned char* &a, unsigned char* &b)
 	b = temp;
 }
 
-void CharList::bufferFile(string fname)
+void CharList::bufferMessage(string fname)
 {
-		unsigned int i = 0;
-		ifstream in(fname.c_str(), std::ios::in | std::ios::binary);
+		unsigned long int i = 0;
+
+		ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
 		
-		if (in.good())
+		if (in.good()) 
 		{
 			in.seekg(0, in.end); //Go to end of stream
 			len = in.tellg(); //Get the length of the file
-			//len -= EOF_LENGTH; //Subtract the length of the eof character
-			file_buffer = new unsigned char[len+1];
-			file_buffer[len] = 0; //null terminate the string
+			message_buffer = new unsigned char[len+1];
+			message_buffer[len] = 0; //null terminate the string
 			in.seekg(0, in.beg); //Reset stream to beginning
 			in >> noskipws; //tell fstream not to ignore whitespace
 			
 			while(i!=len)
 			{
-				in >> file_buffer[i];
+				in >> message_buffer[i];
 				i++;
 			}			
-			cout << "Read " << len << " characters... ";
+			//cout << "Read " << len << " characters... ";
 			// read data as a block:
 		
-			if(in) cout << "all characters read successfully.";
-			else cout << "error: only " << in.gcount() << " characters could be read";
+			if(in) cout << fname << " buffered succesfully\n";
+			else 
+			{
+				cout << "Error buffering message file! " << in.gcount() << " only characters could be read";
+				return;
+			}
 			in.close(); //close the fstream
 			// ...buffer contains the entire file...
 		}
 
 		else
 		{
-			cerr << " File Not Found! " << endl;  
+			cerr << " Unable to buffer message file " << fname << " exiting\n";
 			return;
 		}
-		cout << endl << " length is = " << len << endl;
+		//cout << endl << " length is = " << len << endl;
+}
+
+void CharList::bufferHuffman(string fname)
+{
+		unsigned long int i = 0;
+
+		ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
+		if(in.good())
+		{
+			in.seekg(0, in.end); //Go to end of stream
+			h_len = in.tellg(); //Get the length of the file
+			message_buffer = new unsigned char[len+1];
+			message_buffer[len] = 0; //null terminate the string
+			in.seekg(0, in.beg); //Reset stream to beginning
+			in >> noskipws; //tell fstream not to ignore whitespace
+			
+			while(i!=len)
+			{
+				in >> huffman_buffer[i];
+				i++;
+			}
+			
+			if(in) cout << fname << " buffered succesfully\n";
+			else
+			{
+				cout << "Error buffering compressed file! " << in.gcount() << " only characters could be read";
+				return;
+			}
+			in.close();
+		}
+		else
+		{
+			cerr << " Unable to buffer compressed file " << fname << " exiting\n";
+			return;
+		}
 }
 
 void CharList::populateTable()
 {
 	unsigned char ch = 0;
-	if(file_buffer != NULL)
+	if(message_buffer != NULL)
 	{
 		for(unsigned int i=0; i<len; i++)
 		{
-			ch = file_buffer[i];
+			ch = message_buffer[i];
 			if(charTable[ch].active == false)
 			{
 				charTable[ch].active = true; //set this character to active
@@ -112,6 +151,16 @@ void CharList::populateTable()
 		}
 		cout << "Frequency Table succesfully populated" << endl;
 	}
+}
+
+void CharList::printMessageBuffer()
+{
+	cout << "########Start Message Buffer########\n";
+	for(unsigned int i=0; i<len; i++)
+	{
+		cout << message_buffer[i];
+	}
+	cout << endl << "########End Message Buffer########" << endl;
 }
 
 void CharList::printSorted()
@@ -138,7 +187,7 @@ void CharList::showCharCount()
 
 CharList::~CharList()
 {
-	if(file_buffer != NULL) delete[] file_buffer; //Free file_buffer
+	if(message_buffer != NULL) delete[] message_buffer; //Free message_buffer
 	if(huffman_buffer != NULL) delete[] huffman_buffer; //Free hufmman_buffer
 	for(int i=0; i<UCHAR_MAX; i++)
 	{

@@ -40,12 +40,6 @@ Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned 
 	if(Root -> val == 0) //if this is the first insertion delete Root so that we don't have an extra unpopulated node
 	{	
 		delete Root;
-		Root == NULL;
-	}
-	if((Root -> val) >= val) //insert new node to the left
-	{
-		knew_root -> left = knew_node;
-		knew_root -> right = Root;
 	}
 	else// insert new node to the right
 	{
@@ -105,7 +99,7 @@ Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned lo
 	knew_parent -> right = knew_right;
 	knew_parent -> left = knew_left;
 	
-	if(Root -> val == NULL) //in the case this is the first node we are inserting
+	if(Root -> val == 0) //in the case this is the first node we are inserting
 	{
 		delete knew_root;	
 		delete Root;
@@ -141,23 +135,23 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 	Root = NULL; //set the pointer to Null to prevent any confusion that Root has been erased
 }
 
-void Trie::enc_traverse(Trie_node* Root, unsigned long int bit, unsigned long int bitcode, short int length) //Recursively traverse the Trie and get the bitcode for ever active character
+void Trie::enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcode, unsigned short int length) //Recursively traverse the Trie and get the bitcode for ever active character
 {
 	bool is_char = false;
 	short int* code_length = NULL;
-	short int direction = 0;
 	unsigned char ch = 0;
 	unsigned long int* code = NULL;
+	unsigned long int mask = 0x8000000000000000;
 
 	if(Root == NULL) return;
 	
-	if(bit >= 0 && bit <= 1 && length <= 64) // if we have recursed at least 1 level deep
-	{	
-		bitcode <<= 1;
-		bitcode |= bit;
-		length ++;
+	if((bit == 0 || bit == 1) && length <= sizeof(unsigned long int)*8) // if we have recursed at least 1 level deep then add the bit for the direction we traversed
+	{ //write bits the the buffer big endian style
+		mask >>= length; //shift the mask by the depth of the traversal (number of bits)
+		if(bit == 1) bitcode |= mask; //write the bitcode to buffer 
+		length ++; 
 	}		
-	else if(length > 64) 
+	else if(length > sizeof(unsigned long int)*8) 
 	{
 		cerr << "Unsigned long int overflow error, cannot continue" << endl;
 	}
@@ -181,7 +175,6 @@ void Trie::enc_traverse(Trie_node* Root, unsigned long int bit, unsigned long in
 		*(code) = bitcode; //set the bitcode
 		*(code_length) = length; //set the code length
 	}
-
 }
 
 void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing in the Trie
@@ -194,25 +187,30 @@ void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing
 
 void Trie::print_binary(CharNode* Node)
 {
-	unsigned long int binary = Node -> encoding;
+	unsigned long int binary = 0;
+	unsigned long int mask = 0;
 	int len = Node -> encodeLength;
-	for(int i=len-1; i>=0; i--)
+	for(int i=0; i<len; i++)
 	{
-		printf("%lu", (binary >> i) % 2);
+		mask = (0x8000000000000000 >> i); 
+		binary = (Node -> encoding) & mask;
+		if(binary != 0) printf("1");
+		else printf("0");
 	}
 }
 
 void Trie::printBinary(){
 	//unsigned long int temp = 0;
 	//int len = 0;
-	for(int i=0;i<UCHAR_MAX;i++){
+	for(unsigned char i=0;i<UCHAR_MAX;i++)
+	{
 		//temp = charTable[i].encoding;
 		//len = charTable[i].encodeLength;
 		if(charTable[i].active == true)
 		{
-			cout << charTable[i].character << ": ";
+			cout << "[" << i << ":";
 			print_binary(&charTable[i]);
-			cout << endl;
+			cout << "]" << endl;
 		}
 	}
 }
@@ -274,7 +272,7 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 	}
 }
 
-void Trie::get_encoding() //Recursively traverse to the character creating the bitstring encoding based on left and right traversals
+void Trie::get_encoding() //Recursively traverse the Trie and write the bitstring and length for every character in it
 {
 	enc_traverse(root, -1, 0, 0);	
 }

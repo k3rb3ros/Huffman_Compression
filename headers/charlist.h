@@ -15,7 +15,7 @@ class CharList
 {
 	private:	
 	friend class Huffman;
-	unsigned char* file_buffer;
+	unsigned char* message_buffer;
 	unsigned char* huffman_buffer;
 	int charOccurrence;
 	unsigned long int len;
@@ -32,9 +32,10 @@ class CharList
 	public:
 
 	CharList(); //default constructor
-	void bufferFile(string fname); //Name changed so that it makes more sense
-	void bufferHuffman();
+	void bufferMessage(string fname); //Name changed so that it makes more sense
+	void bufferHuffman(string fname);
 	void populateTable();
+	void printMessageBuffer();
 	void printSorted();
 	void showCharCount();
 	void sortTable();

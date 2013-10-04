@@ -30,17 +30,17 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	string getMcpName(string);
 	vector<string> mylist;
 
-	void bit_write(unsigned char &src,unsigned char &dest, const short int bits);
-	short int get_bit(int l_carry, short int length);
-	short int get_byte(int length);
-	short int get_offset(int length);
+	bool get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offet);
+	bool get_ulbit(unsigned long int* buffer, unsigned short int offset);
+	int search(unsigned long int* pattern, unsigned short int* length, unsigned char* huffman_character);
 	void dump_buffer();
-	bool getbit(unsigned long int* buffer, short int offset);
-	void setbit(unsigned char* buffer,int index, short int offset, bool value);
+	void set_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset, bool value);
+	void set_ulbit(unsigned long int* buffer, unsigned short int offset, bool value); 
 
 	public:
 	Huffman();
 	void compress();
+	void decompress();
 	int readHeader(string hfile);
 	void populateHeader(string hfile,string fname);
 	void print_huffman();

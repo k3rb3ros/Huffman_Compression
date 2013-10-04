@@ -23,7 +23,7 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 	unsigned long int node_count;
 	void count_traverse(Trie_node* Root);
 	void delete_trie(Trie_node* Root);
-	void enc_traverse(Trie_node* Root, unsigned long int bit, unsigned long int bitcode, short int length);
+	void enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcode, unsigned short int length);
 	void node_traverse(Trie_node* Root);
 	void print_binary(CharNode* node);
 	unsigned long int sum_nodes(Trie_node* Root, unsigned long int sum);

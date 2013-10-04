@@ -16,7 +16,7 @@ int main(int argv, char **argc)
 	string hfile = "header_output_test.txt";
 	Huffman huffman;
 	//example compress
-	huffman.bufferFile(fname);
+	huffman.bufferMessage(fname);
 	huffman.populateTable();
 	//huffman.showCharCount();
 	huffman.sortTable();
@@ -25,13 +25,15 @@ int main(int argv, char **argc)
 	cout << "Nodes: " << huffman.size_of_trie() << endl;
 	cout << "Characters: " << huffman.character_count() << endl;
 	huffman.get_encoding();
-	huffman.test();
-	huffman.print_encoding_table();
-	huffman.printBinary();
+	//huffman.test();
+	//huffman.printBinary();
+	//huffman.print_encoding_table();
 	huffman.compress();
 	huffman.print_huffman();
 	huffman.populateHeader(hfile,fname);
 	huffman.readHeader(hfile);
+	huffman.decompress();
+	huffman.printMessageBuffer();
 	while(getchar() != '\n');
 	return 0;
 }

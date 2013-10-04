@@ -13,32 +13,40 @@ Huffman::Huffman()
 	encoded_text = "";
 }
 
-void Huffman::bit_write(unsigned char &src, unsigned char &dest, const short int bits) //write the number of bits passed into the function from unsigned char src to unsigned char dest
+bool Huffman::get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset)
 {
-	enum bit_codes{ BIT8 = 0x80, BIT7 = 0x40, BIT6 = 0X20, BIT5 = 0X10, BIT4 = 0X8, BIT3 = 0X4, BIT2 = 0X2, BIT1 = 0X1 };
-	switch(bits)
+	unsigned long int mask = 0;
+	mask = (0x80 >> offset % (sizeof(unsigned char)*8)); //set the mask to the nth bit from the left side
+	return (buffer[index] & mask) != 0; //if the buffer bitwise anded with the mask = return true (1) otherwise its a zero
+}
+
+/* Created with the help of Dr. MacEvoy */
+bool Huffman::get_ulbit(unsigned long int* buffer, unsigned short int offset)//get the bit value at byte[offset] starting at the right wiht least significant bit
+{
+	unsigned long int mask = 0;
+	if(offset >= MAX_BIT_SIZE) return false;
+	mask = (0x8000000000000000 >> offset); //set the mask to the nth bit from the right side
+	return (*buffer & mask) != 0;
+}
+
+int Huffman::search(unsigned long int* pattern, unsigned short int* length, unsigned char* huffman_character)
+{
+	for(short int ch=UCHAR_MAX; ch >= 0; ch--)
 	{
-		case 8:
-		dest |= (src & BIT8);
-		case 7:
-		dest |= (src & BIT7);
-		case 6:
-		dest |= (src & BIT6);
-		case 5:
-		dest |= (src & BIT5);
-		case 4:
-		dest |= (src & BIT4);
-		case 3:
-		dest |= (src & BIT3);
-		case 2:
-		dest |= (src & BIT2);
-		case 1:
-		dest |= (src & BIT1);
-		break;
-		
-		default:
-		break;
+		unsigned long int count = ((CharNode*) &*(charSort[ch]))->occurrence;
+		while(count != *length && ch >= 0)
+		{
+			if(count == 0 || (ch == 0 && (count != *length))) return -1; //if there isn't a bitcode length match, then stop searching
+			count = ((CharNode*) &*(charSort[--ch]))->occurrence; //decrement our search table index until we find bitcodes of the same length
+		}
+		if(*pattern == ((CharNode*) &*(charSort[ch]))->encoding)//If this is true we found a match
+		{
+			*huffman_character = (unsigned char)ch;
+			cout << "Match found character is:" << (unsigned char)ch << endl;
+			return 1; //return success
+		}	
 	}
+	return -1;
 }
 
 void Huffman::dump_buffer()
@@ -46,46 +54,26 @@ void Huffman::dump_buffer()
 	ofstream write("test.dat");
 	for(unsigned int i=0; i<len; i++)
 	{
-		write << "/" << (int)file_buffer[i];
+		write << "/" << (int)message_buffer[i];
 	}
 	write.close();
 }
 
 /* Created with the help of Dr. MacEvoy */
-bool Huffman::getbit(unsigned long int* buffer, short int offset)//get the bit value at byte[offset] starting at the right wiht least significant bit
+void Huffman::set_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset, bool value) 
 {
-	unsigned long int mask = 0;
-	if(offset >= MAX_BIT_SIZE) return false;
-	mask = (1 << offset);
-	return (*buffer & mask) != 0;
-}
-
-/* Created with the help of Dr. MacEvoy */
-void Huffman::setbit(unsigned char* buffer, int index, short int offset, bool value) 
-{
-	unsigned long int mask = 0;
-	if(offset >= MAX_BIT_SIZE) return;
-	mask = (0x80 >> ((offset % 8)-1));
+	unsigned char mask = 0;
+	//we want this function to be able to overflow since it carries over to the next byte
+	mask = (0x80 >> (offset % (sizeof(unsigned char)*8)));
 	if(value) buffer[index] |= mask;
 }
 
-short int Huffman::get_bit(int l_carry, short int length)
-{		
-	short int offset = (8 - (length % 8));
-	if(offset == 8) offset = 0;
-	return (l_carry - offset);
-}
-
-short int Huffman::get_byte(int length)
+void Huffman::set_ulbit(unsigned long* buffer, unsigned short int offset, bool value)
 {
-	return ceil(((sizeof(unsigned long int)*8)-length)/8);
-}
-
-short int Huffman::get_offset(int length)
-{
-	short int offset = (8 - (length % 8));
-	if(offset == 8) offset = 0;
-	return offset;
+	unsigned long int mask = 0;
+	if(offset >= sizeof(unsigned long int)*8) return;
+	mask = (0x8000000000000000 >> offset);
+	if(value) *buffer |= mask;
 }
 
 string getMcpName(string fname)
@@ -95,26 +83,25 @@ string getMcpName(string fname)
 
 void Huffman::compress() //compress the original message
 {
-	bool write_over = false;
 	unsigned char ch = 0;
 	int code_length = 0;
-	int index = 0;
-	short int offset = 0;
+	//short int offset = 0;
 	unsigned long int* bit_code = NULL;
-	unsigned long int bit_count = 1;
+	unsigned long int bit_count = 0;
+	unsigned long int index = 0;
 	
 	huffman_buffer = new unsigned char[H_BUF];//allocate the buffer
-	for(unsigned short int k=0; k<H_BUF; k++) huffman_buffer[k] = 0;
+	for(unsigned long int k=0; k<H_BUF; k++) huffman_buffer[k] = 0;
 	
 	for(unsigned long int i=0; i<len; i++)
 	{	
-		ch = file_buffer[i]; //get the character we are encoding
+		ch = message_buffer[i]; //get the character we are encoding
 		bit_code = &charTable[ch].encoding; //look up its bit_code
 		code_length = charTable[ch].encodeLength; //look up the length (in bits) of the bitcode
 		
-		for(short int j=code_length-1; j>=0; j--)
+		for(short int j=0; j<code_length; j++)
 		{
-			setbit(huffman_buffer, index, bit_count++ , getbit(bit_code, j)); //write the bitcodes to the buffer
+			set_chbit(huffman_buffer, index, bit_count++ , get_ulbit(bit_code, j)); //write the bitcodes to the buffer
 			if(bit_count%8 == 0) index++;
 		}
 	}
@@ -122,11 +109,42 @@ void Huffman::compress() //compress the original message
 	h_len = index+1; //index; //return the length of the huffman trie in bytes
 }
 
+void Huffman::decompress() //decompress our Huffman encoded message
+{
+	bool match = false;
+	unsigned char ch = 0;
+	unsigned long int bit_count = 0;
+	unsigned long int current_bit_code = 0;
+	unsigned long int index = 0;
+	unsigned short int length = 0;
+
+	if(message_buffer != NULL) delete[] message_buffer; //free anything in the buffer if it is already populated
+	
+	message_buffer = new unsigned char[len]; //allocate the buffer
+	for(unsigned long int k=0; k<len; k++) message_buffer[k] = 0; //zero fill the buffer
+	
+	for(unsigned long int i=0; i<len; i++) //fill every character in the message buffer after it has been decoded
+	{
+		length = 0; //reset the bitcount 
+		
+		while(!match && (length <= sizeof(unsigned long int)*8))
+		{
+			set_ulbit(&current_bit_code, length++, get_chbit(huffman_buffer, index, bit_count++)); //get the current bit
+			if(search(&current_bit_code, &length, &ch) == true) //search for the bitcode in our lookup table
+			{
+				message_buffer[i] = ch;//write the character to message buffer
+				match = true; //set match equal to true and break out of the inner loop
+			}
+			if(length % 8 == 0) index++; //increment index every new byte
+		}
+	}
+}
+
 int Huffman::readHeader(string hfile)
 {
 	int num;
-	int i=0;
-	int f_len = hfile.size();
+	//int i=0;
+	//f_len = hfile.size();
 	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
 	string m_number;
 	string f_name;
@@ -176,10 +194,10 @@ void Huffman::populateHeader(string hfile,string fname) // Write the header
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << fname << endl; //Write file name
 
-	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence ;
+	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence ;
 	outf << DELIM << DELIM << endl; //Write char table and int with with double delimiter
 
-	for(int i=0;i<h_len;i++) outf << huffman_buffer[i]; //write encoded test
+	for(unsigned long int i=0;i<h_len;i++) outf << huffman_buffer[i]; //write encoded test
 		outf << endl;
     	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
@@ -189,7 +207,7 @@ void Huffman::print_huffman()
 {
 	for(unsigned int i=0; i<h_len; i++)
 	{
-		cout << "\\" <<  (int)huffman_buffer[i];
+		cout << "\\" << (int)huffman_buffer[i];
 	}
 	cout << endl << "Length of huffman codeing = " << h_len << " characters" << endl;
 }
