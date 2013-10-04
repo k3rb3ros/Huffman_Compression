@@ -131,6 +131,7 @@ int Huffman::readHeader(string hfile)
 	string m_number;
 	string f_name;
 	string table;
+	string enc_text;
 	string e_o_f;
 	ifstream inf(hfile.c_str());
 	if(!inf) cout << "Error reading file..." << endl;
@@ -161,8 +162,10 @@ int Huffman::readHeader(string hfile)
 			cout << table[i];
 			i++;
 		} 
+		getline(inf,enc_text);
+		cout << endl << "enc_text = "  << enc_text << endl;
 		getline(inf, e_o_f);
-		cout  << endl  << "eof: " << e_o_f; // not working...
+		cout  << endl  << "eof: " << e_o_f;
 	}
 	return 0;
 }
@@ -172,9 +175,13 @@ void Huffman::populateHeader(string hfile,string fname) // Write the header
 	ofstream outf(hfile.c_str());
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << fname << endl; //Write file name
-	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence << DELIM << DELIM; //Write char table and int with with double delimiter
+
+	for(int i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence ;
+	outf << DELIM << DELIM << endl; //Write char table and int with with double delimiter
+
 	for(int i=0;i<h_len;i++) outf << huffman_buffer[i]; //write encoded test
-    	outf << endl << O_EOF; //write our "Output" EOF character
+		outf << endl;
+    	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
 }
 
