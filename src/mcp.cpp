@@ -25,13 +25,13 @@ int main(int argv, char **argc)
 	huffman.get_encoding();
 	//huffman.test();
 	//huffman.printBinary();
-	//huffman.print_encoding_table();
+	huffman.print_encoding_table();
 	huffman.compress();
 	//huffman.print_huffman();
 	//huffman.populateHeader(fname);
 	//huffman.readHeader(hfile);
 	huffman.decompress();
-	//huffman.printMessageBuffer();
+	huffman.printMessageBuffer();
 	while(getchar() != '\n');
 	return 0;
 }

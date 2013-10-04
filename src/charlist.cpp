@@ -59,78 +59,78 @@ void CharList::swap(unsigned char* &a, unsigned char* &b)
 
 void CharList::bufferMessage(string fname)
 {
-		unsigned long int i = 0;
+	unsigned long int i = 0;
 
-		ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
+	ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
 		
-		if (in.good()) 
-		{
-			in.seekg(0, in.end); //Go to end of stream
-			len = in.tellg(); //Get the length of the file
-			message_buffer = new unsigned char[len+1];
-			message_buffer[len] = 0; //null terminate the string
-			in.seekg(0, in.beg); //Reset stream to beginning
-			in >> noskipws; //tell fstream not to ignore whitespace
+	if (in.good()) 
+	{
+		in.seekg(0, in.end); //Go to end of stream
+		len = in.tellg(); //Get the length of the file
+		message_buffer = new unsigned char[len+1];
+		message_buffer[len] = 0; //null terminate the string
+		in.seekg(0, in.beg); //Reset stream to beginning
+		in >> noskipws; //tell fstream not to ignore whitespace
 			
-			while(i!=len)
-			{
-				in >> message_buffer[i];
-				i++;
-			}			
-			//cout << "Read " << len << " characters... ";
-			// read data as a block:
-		
-			if(in) cout << fname << " buffered succesfully\n";
-			else 
-			{
-				cout << "Error buffering message file! " << in.gcount() << " only characters could be read";
-				return;
-			}
-			in.close(); //close the fstream
-			// ...buffer contains the entire file...
-		}
-
-		else
+		while(i!=len)
 		{
-			cerr << " Unable to buffer message file " << fname << " exiting\n";
+			in >> message_buffer[i];
+			i++;
+		}			
+		//cout << "Read " << len << " characters... ";
+		// read data as a block:
+	
+		if(in) cout << fname << " buffered succesfully\n";
+		else 
+		{
+			cout << "Error buffering message file! " << in.gcount() << " only characters could be read";
 			return;
 		}
+		in.close(); //close the fstream
+		// ...buffer contains the entire file...
+	}
+
+	else
+	{
+		cerr << " Unable to buffer message file " << fname << " exiting\n";
+		return;
+	}
 		//cout << endl << " length is = " << len << endl;
 }
 
 void CharList::bufferHuffman(string fname)
 {
-		unsigned long int i = 0;
+	unsigned long int i = 0;
 
-		ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
-		if(in.good())
+	ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
+	if(in.good())
+	{
+		in.seekg(0, in.end); //Go to end of stream
+		h_len = in.tellg(); //Get the length of the file
+		message_buffer = new unsigned char[len+1];
+		message_buffer[len] = 0; //null terminate the string
+		in.seekg(0, in.beg); //Reset stream to beginning
+		in >> noskipws; //tell fstream not to ignore whitespace
+			
+		while(i!=len)
 		{
-			in.seekg(0, in.end); //Go to end of stream
-			h_len = in.tellg(); //Get the length of the file
-			message_buffer = new unsigned char[len+1];
-			message_buffer[len] = 0; //null terminate the string
-			in.seekg(0, in.beg); //Reset stream to beginning
-			in >> noskipws; //tell fstream not to ignore whitespace
-			
-			while(i!=len)
-			{
-				in >> huffman_buffer[i];
-				i++;
-			}
-			
-			if(in) cout << fname << " buffered succesfully\n";
-			else
-			{
-				cout << "Error buffering compressed file! " << in.gcount() << " only characters could be read";
-				return;
-			}
-			in.close();
+			in >> huffman_buffer[i];
+			i++;
 		}
+			
+		if(in) cout << fname << " buffered succesfully\n";
 		else
 		{
-			cerr << " Unable to buffer compressed file " << fname << " exiting\n";
+			cout << "Error buffering compressed file! " << in.gcount() << " only characters could be read";
 			return;
 		}
+		in.close();
+	}
+	else
+	{
+		cerr << " Unable to buffer compressed file " << fname << " exiting\n";
+		return;
+	}
 }
 
 void CharList::populateTable()

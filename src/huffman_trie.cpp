@@ -223,6 +223,11 @@ unsigned long int Trie::sum_nodes(Trie_node* Root, unsigned long int sum)
 	return sum;
 }
 
+bool Trie::is_a_leaf(Trie_node* Node) //return true if the Node passed in is a leaf node
+{
+	return (Node -> left == NULL && Node -> right == NULL);
+}
+
 unsigned long int Trie::character_count() //Recursively count the number of characters represented by the Trie **FOR DEBUGGING**
 {
 	count_traverse(root);
@@ -289,6 +294,7 @@ void Trie::print_encoding_table()
 			cout << "| ";
 		}
 	}
+	cout << endl;
 }
 
 void Trie::print_sort_table() //prints the active characters and their occurence in sorted order

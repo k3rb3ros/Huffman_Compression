@@ -31,6 +31,7 @@ bool Huffman::get_ulbit(unsigned long int* buffer, unsigned short int offset)//g
 
 int Huffman::search(unsigned long int* pattern, unsigned short int* length, unsigned char* huffman_character)
 {
+	cout << "searching for: " << hex << *pattern << endl;
 	for(short int ch=UCHAR_MAX; ch >= 0; ch--)
 	{
 		unsigned long int count = ((CharNode*) &*(charSort[ch]))->occurrence;
@@ -38,6 +39,7 @@ int Huffman::search(unsigned long int* pattern, unsigned short int* length, unsi
 		{
 			if(count == 0 || (ch == 0 && (count != *length))) return -1; //if there isn't a bitcode length match, then stop searching
 			count = ((CharNode*) &*(charSort[--ch]))->occurrence; //decrement our search table index until we find bitcodes of the same length
+			//cout << "search: " << ch << endl;
 		}
 		if(*pattern == ((CharNode*) &*(charSort[ch]))->encoding)//If this is true we found a match
 		{
@@ -120,6 +122,7 @@ void Huffman::compress() //compress the original message
 void Huffman::decompress() //decompress our Huffman encoded message
 {
 	bool match = false;
+	Trie_node* Test = NULL;
 	unsigned char ch = 0;
 	unsigned long int bit_count = 0;
 	unsigned long int current_bit_code = 0;
@@ -133,18 +136,28 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	
 	for(unsigned long int i=0; i<len; i++) //fill every character in the message buffer after it has been decoded
 	{
+		bool bit = false;
 		length = 0; //reset the bitcount 
+		Test = root; //set the test node to the Root of the Trie
 		
-		while(!match && (length <= sizeof(unsigned long int)*8))
+		while(!is_a_leaf(Test) && (length <= h_len*8))
 		{
-			set_ulbit(&current_bit_code, length++, get_chbit(huffman_buffer, index, bit_count++)); //get the current bit
-			if(search(&current_bit_code, &length, &ch) == true) //search for the bitcode in our lookup table
+			bit = (get_chbit(huffman_buffer, index, bit_count++));// get the current bit in the buffer
+			cout << bit;
+			if(bit_count %8 == 0) index++; //incriment index every byte			
+			length++;
+			if(Test != NULL)
 			{
-				message_buffer[i] = ch;//write the character to message buffer
-				match = true; //set match equal to true and break out of the inner loop
+				if(bit) Test = Test -> right;
+				else Test = Test -> left;
 			}
-			if(length % 8 == 0) index++; //increment index every new byte
 		}
+		if(is_a_leaf(Test))
+		{
+			ch = Test -> character;
+			message_buffer[i] = ch;
+		}
+		else cerr << "bitcode does not exist\n";
 	}
 }
 void Huffman::table_char_count(string table)

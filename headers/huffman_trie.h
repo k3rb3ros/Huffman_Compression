@@ -16,6 +16,7 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 {
 	private:
 
+	friend class Huffman;
 	Trie_node* root;
 	Trie_node* insert_node(Trie_node* Root, unsigned char character, unsigned long int val);
 	Trie_node* insert_2nodes(Trie_node* Root, unsigned char char1, unsigned long int val1, unsigned char char2, unsigned long int val2);
@@ -28,6 +29,9 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 	void print_binary(CharNode* node);
 	unsigned long int sum_nodes(Trie_node* Root, unsigned long int sum);
 
+	protected:
+	bool is_a_leaf(Trie_node* Node);
+			
 	public:
 	
 	Trie();
