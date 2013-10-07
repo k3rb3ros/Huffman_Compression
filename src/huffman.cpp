@@ -172,45 +172,9 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	}
 }
 
-void Huffman::table_char_count(string table)
+double Huffman::compression_percentage()
 {
-/*	
-	string temp_str;
-	string str;
-	int temp_num=0;
-	
-	//insert the characters and their counts into a vector in order to split them from the string
-	for(unsigned int i=0; i< table.length();i++)
-	{
-		if(table[i]!= ' ') temp_str += table[i];
-		if(table[i]== ' ')
-		{
-			i++;
-			mylist.push_back (temp_str);
-			temp_str="";
-		}	
-	}
-	//convert every other element in the array back into an integer and add them up
-	for(unsigned int j=0; j < mylist.size(); j++)
-		if (j%2 == 1)
-		{
-			temp_num += atoi(mylist[j].c_str());	
-		}
-		enc_len = temp_num; //Set the length of the header file in the class
-		cout << "Characters in table: " << enc_len << endl;
-		huffman_buffer = new unsigned char[enc_len]; //allocate the buffer for the size we need
-*/
-}
-
-void Huffman::deleteVector(vector<string> mylist)
-{
-	mylist.erase (mylist.begin(),mylist.end());
-}
-
-double Huffman::compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count)
-{
-	percent_compressed = (compressed_count / uncompressed_count) * 100; 
-	return percent_compressed;
+	return (((double)h_len / (double)len) * 100); 
 }
 
 string Huffman::setMcpName(string fname)
@@ -274,19 +238,43 @@ int Huffman::readHeader()
 	return 1;
 }
 
-void Huffman::writeHeader() // Write the header
+void Huffman::writeHeader() // Write the header (including huffman code)
 {
-	ofstream debug("compress.dat");
+	unsigned int count = 0;
 	file_to_decompress = setMcpName(file_to_compress);
 	ofstream outf(file_to_decompress.c_str());
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << file_to_compress << endl; //Write file name
-	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf << charTable[i].character << charTable[i].occurrence << DELIM; //Write the active characters and their counts
+	for(unsigned char i=0; i<UCHAR_MAX; i++) 
+	{
+		if(charTable[i].active) outf << charTable[i].character << charTable[i].occurrence << DELIM; //Write the active characters and their counts
+		count ++;
+	}
 	outf << DELIM << endl; //Write char table and int with with double delimiter
-	for(unsigned long int i=0;i<enc_len;i++) outf << huffman_buffer[i]; outf << DELIM << DELIM << endl; //write the huffman code 
-	for(unsigned long int i=0;i<enc_len;i++) debug << "\\" << (int)huffman_buffer[i]; 
+	for(unsigned long int i=0;i<enc_len;i++)
+	{
+		outf << huffman_buffer[i]; outf << DELIM << DELIM << endl; //write the huffman code 
+		count ++;
+	}
     	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
+	count += file_to_compress.length();
+	count += 12;
+	h_len = count; //sum the count for ratio calculation
+}
+
+void Huffman::writeMessage() // Write the original message back to file form buffer
+{
+	ofstream out(file_to_compress);
+	if(out.good())
+	{
+		for(unsigned int i=0; i<len; i++)
+		{
+			out << message_buffer[i];
+		}
+	}
+	else cerr << "Unable to open output file" << endl;
+	out.close();
 }
 
 void Huffman::print_orig()

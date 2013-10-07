@@ -40,18 +40,16 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 
 	public:
 	Huffman();
+	double compression_percentage();
+	int readHeader();
 	void compress();
 	void decompress();
-	int readHeader();
-	//vector<string> mylist;
-	void writeHeader();
 	void print_orig();
 	void print_huffman();
-	
-	double compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count);
-	void deleteVector(vector<string> mylist);
-	void table_char_count(string table);
 	void test();
+	void writeHeader();
+	void writeMessage();
+	
 	~Huffman();
 };
 #endif
