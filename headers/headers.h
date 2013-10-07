@@ -5,8 +5,8 @@
 * September 2014
 */
 
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#ifndef HEADERS_H
+#define HEADERS_H
 	#include <assert.h>
 	#include <iostream>
 	#include <fstream>

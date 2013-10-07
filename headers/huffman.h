@@ -5,8 +5,8 @@
 * September 2014
 */
 
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef HUFFMAN_H
+#define HUFFMAN_H
 
 #include "charlist.h"
 #include "headers.h"

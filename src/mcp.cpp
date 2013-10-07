@@ -10,10 +10,11 @@
 #include "../headers/huffman.h"
 #include "../headers/huffman_trie.h"
 
-int main(int argv, char **argc)
-{	
+
+void compress(char* file_name)
+{
+	string mycppstr(file_name);
 	Huffman huffman;
-	//example compress
 	huffman.bufferMessage();
 	huffman.populateTable();
 	huffman.sortTable();
@@ -21,9 +22,20 @@ int main(int argv, char **argc)
 	huffman.get_encoding();
 	huffman.compress();
 	huffman.writeHeader();
+	//huffman.compression_percentage(percent_compressed,compressed_count,uncompressed_count);
+
+}
+
+void decompress(char* file_name)
+{
+	string mycppstr(file_name);	
+	Huffman huffman;
+
 	huffman.readHeader();
-	//huffman.decompress();
-	//huffman.printMessageBuffer();
-	while(getchar() != '\n');
-	return 0;
+	huffman.populateTable();
+	huffman.sortTable();
+	huffman.populate_trie();
+	//huffman.get_encoding(); // we may not need this
+	huffman.decompress();
+	huffman.bufferHuffman();
 }

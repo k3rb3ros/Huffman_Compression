@@ -250,7 +250,6 @@ int Huffman::readHeader()
 		getline(inf,f_name);
 		cout << "Original file: " << f_name << endl;
 		getline(inf,table);	
-		cout << " Table: " << endl << table;
 		//extract table data from header file
 		while(!done)
 		{
@@ -278,7 +277,7 @@ int Huffman::readHeader()
 		getline(inf,enc_text);
 	//	cout << endl << "enc_text = "  << enc_text << endl;
 		getline(inf, e_o_f);
-		cout  << endl  << "eof: " << e_o_f;
+	//	cout  << endl  << "eof: " << e_o_f;
 	}
 	return 0;
 }
