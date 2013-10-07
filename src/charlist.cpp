@@ -135,7 +135,7 @@ void CharList::bufferHuffman()
 	}
 }
 
-void CharList::populateTable()
+void CharList::CompPopulateTable()
 {
 	unsigned char ch = 0;
 	if(message_buffer != NULL)
@@ -152,6 +152,21 @@ void CharList::populateTable()
 			else charTable[ch].occurrence ++;
 		}
 		cout << "Frequency Table succesfully populated" << endl;
+	}
+}
+
+void CharList::DecompPopulateTable(vector<string> char_list)
+{
+	string temp_count = "";
+	unsigned char ch = 0;
+	for(int i=0; i<char_list.size(); i+=2)
+	{
+		ch = char_list[i][0];
+		//ch = temp_char[0];	
+		temp_count = char_list[i+1];//get the count
+		
+		charTable[ch].active = true; //set the character to active
+		charTable[ch].occurrence = strtoul(temp_count.c_str(), NULL, 0); //set the character count of that character in the charlist
 	}
 }
 

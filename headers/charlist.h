@@ -36,7 +36,8 @@ class CharList
 	CharList(); //default constructor
 	void bufferMessage(); //Name changed so that it makes more sense
 	void bufferHuffman();
-	void populateTable();
+	void CompPopulateTable();
+	void DecompPopulateTable(vector<string> charlist);
 	void printMessageBuffer();
 	void printSorted();
 	void showCharCount();

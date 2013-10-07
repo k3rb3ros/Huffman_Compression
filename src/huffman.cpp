@@ -159,6 +159,7 @@ void Huffman::decompress() //decompress our Huffman encoded message
 		else cerr << "bitcode does not exist\n";
 	}
 }
+
 void Huffman::table_char_count(string table)
 {	
 	string temp_str;
@@ -182,6 +183,7 @@ void Huffman::table_char_count(string table)
 		{
 			temp_num += atoi(mylist[j].c_str());	
 		}
+		h_len = temp_num; //Set the length of the header file in the class
 		cout << "Characters in table: " << temp_num << endl;
 }
 
@@ -218,7 +220,6 @@ string Huffman::setMcpName(string fname)
 int Huffman::readHeader()
 {
 	int num;
-	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
 	int i=0;
 	int f_len = file_to_decompress.size();
 	bool done = false;
@@ -233,7 +234,7 @@ int Huffman::readHeader()
 	string e_o_f;
 	ifstream inf(file_to_decompress.c_str());
 	ofstream out(tableFile.c_str());
-	if(!inf) cout << "Error reading file..." << endl;
+	if(!inf) cerr << "Error reading file..." << endl;
 	else 
 	{
 		getline(inf,m_number);
@@ -250,7 +251,6 @@ int Huffman::readHeader()
 		getline(inf,f_name);
 		cout << "Original file: " << f_name << endl;
 		getline(inf,table);	
-		cout << " Table: " << endl << table;
 		//extract table data from header file
 		while(!done)
 		{
@@ -259,9 +259,9 @@ int Huffman::readHeader()
 			//make a string comparison with the last four characters in the array in order to break the loop.
 			if(i++ > 4 && table.compare(table.length()-4,4,double_delim)==0) done=true;
 		}
-		i=0;
 
 		//remove delimiters from table and replace them with white space 
+		i=0;
 		while(i!=table.length())
 		{
 			t_char=table[i];
@@ -274,11 +274,10 @@ int Huffman::readHeader()
 		out << table;
 		table_char_count(table);
 		out.close();
+		//call Function to populat charTableHere
 		
 		getline(inf,enc_text);
-	//	cout << endl << "enc_text = "  << enc_text << endl;
 		getline(inf, e_o_f);
-		cout  << endl  << "eof: " << e_o_f;
 	}
 	return 0;
 }

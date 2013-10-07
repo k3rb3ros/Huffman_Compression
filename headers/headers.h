@@ -12,9 +12,10 @@
 	#include <fstream>
 	#include <limits.h>
 	#include <math.h>
-	#include <stack>
-    #include <stdio.h>
 	#include <sstream>
+	#include <stack>
+    	#include <stdio.h>
+	#include <string.h>
 	#include <vector>
 	#include <stdlib.h>
 	using namespace std;

@@ -15,7 +15,7 @@ int main(int argv, char **argc)
 	Huffman huffman;
 	//example compress
 	huffman.bufferMessage();
-	huffman.populateTable();
+	huffman.CompPopulateTable();
 	huffman.sortTable();
 	huffman.populate_trie();
 	huffman.get_encoding();
