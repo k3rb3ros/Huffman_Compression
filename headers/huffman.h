@@ -24,15 +24,16 @@
 class Huffman : public Trie //Huffman is a CharList and Trie
 {
 	private:
-	string file_to_compress;
+	
 	string header_table;
 	string encoded_text;
-	string getMcpName(string);
 	vector<string> mylist;
 
 	bool get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offet);
 	bool get_ulbit(unsigned long int* buffer, unsigned short int offset);
 	int search(unsigned long int* pattern, unsigned short int* length, unsigned char* huffman_character);
+	string getMcpName(string fname);
+	string setMcpName(string file_to_compress);
 	void dump_buffer();
 	void set_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset, bool value);
 	void set_ulbit(unsigned long int* buffer, unsigned short int offset, bool value); 
@@ -42,7 +43,7 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	void compress();
 	void decompress();
 	int readHeader(string hfile);
-	void populateHeader(string h_name);
+	void writeHeader();
 	void print_huffman();
 	
 	double compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count);

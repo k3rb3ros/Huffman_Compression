@@ -12,26 +12,24 @@
 
 int main(int argv, char **argc)
 {	
-	string fname = "../text/us_constitution.txt";
-	string hfile = "header_output_test.txt";
 	Huffman huffman;
 	//example compress
-	huffman.bufferMessage(fname);
+	huffman.bufferMessage();
 	huffman.populateTable();
 	//huffman.showCharCount();
 	huffman.sortTable();
 	//huffman.printSorted();
 	huffman.populate_trie();
-	huffman.get_encoding();
+	//huffman.get_encoding();
 	//huffman.test();
 	//huffman.printBinary();
-	huffman.print_encoding_table();
-	huffman.compress();
+	//huffman.print_encoding_table();
+	//huffman.compress();
 	//huffman.print_huffman();
-	//huffman.populateHeader(fname);
+	huffman.writeHeader();
 	//huffman.readHeader(hfile);
-	huffman.decompress();
-	huffman.printMessageBuffer();
+	//huffman.decompress();
+	//huffman.printMessageBuffer();
 	while(getchar() != '\n');
 	return 0;
 }

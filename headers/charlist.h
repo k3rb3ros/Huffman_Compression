@@ -18,6 +18,8 @@ class CharList
 	unsigned char* message_buffer;
 	unsigned char* huffman_buffer;
 	int charOccurrence;
+	string file_to_compress;
+	string file_to_decompress;
 	unsigned long int len;
 	unsigned long int h_len;
 	void delBuckets(CharBucket* buckets);	
@@ -32,8 +34,8 @@ class CharList
 	public:
 
 	CharList(); //default constructor
-	void bufferMessage(string fname); //Name changed so that it makes more sense
-	void bufferHuffman(string fname);
+	void bufferMessage(); //Name changed so that it makes more sense
+	void bufferHuffman();
 	void populateTable();
 	void printMessageBuffer();
 	void printSorted();

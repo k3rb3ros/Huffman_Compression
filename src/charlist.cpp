@@ -12,6 +12,8 @@ CharList::CharList()
 	message_buffer = NULL;
 	huffman_buffer = NULL;
 	charOccurrence = -1;
+	file_to_compress = "us_constitution.txt";
+	file_to_decompress = "";
 	len = 0;
 	h_len = 0;
 	table_len = 0;
@@ -57,11 +59,11 @@ void CharList::swap(unsigned char* &a, unsigned char* &b)
 	b = temp;
 }
 
-void CharList::bufferMessage(string fname)
+void CharList::bufferMessage()
 {
 	unsigned long int i = 0;
 
-	ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
+	ifstream in(file_to_compress.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
 		
 	if (in.good()) 
 	{
@@ -80,7 +82,7 @@ void CharList::bufferMessage(string fname)
 		//cout << "Read " << len << " characters... ";
 		// read data as a block:
 	
-		if(in) cout << fname << " buffered succesfully\n";
+		if(in) cout << file_to_compress << " buffered succesfully\n";
 		else 
 		{
 			cout << "Error buffering message file! " << in.gcount() << " only characters could be read";
@@ -92,17 +94,17 @@ void CharList::bufferMessage(string fname)
 
 	else
 	{
-		cerr << " Unable to buffer message file " << fname << " exiting\n";
+		cerr << " Unable to buffer message file " << file_to_compress << " exiting\n";
 		return;
 	}
 		//cout << endl << " length is = " << len << endl;
 }
 
-void CharList::bufferHuffman(string fname)
+void CharList::bufferHuffman()
 {
 	unsigned long int i = 0;
 
-	ifstream in(fname.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
+	ifstream in(file_to_decompress.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
 	if(in.good())
 	{
 		in.seekg(0, in.end); //Go to end of stream
@@ -118,7 +120,7 @@ void CharList::bufferHuffman(string fname)
 			i++;
 		}
 			
-		if(in) cout << fname << " buffered succesfully\n";
+		if(in) cout << file_to_decompress << " buffered succesfully\n";
 		else
 		{
 			cout << "Error buffering compressed file! " << in.gcount() << " only characters could be read";
@@ -128,7 +130,7 @@ void CharList::bufferHuffman(string fname)
 	}
 	else
 	{
-		cerr << " Unable to buffer compressed file " << fname << " exiting\n";
+		cerr << " Unable to buffer compressed file " << file_to_decompress << " exiting\n";
 		return;
 	}
 }

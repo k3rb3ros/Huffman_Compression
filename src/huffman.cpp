@@ -8,9 +8,8 @@
 
 Huffman::Huffman()
 {
-	file_to_compress = "";
-	header_table = "";
-	encoded_text = "";
+		header_table = "";
+		encoded_text = "";
 }
 
 bool Huffman::get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset)
@@ -78,7 +77,7 @@ void Huffman::set_ulbit(unsigned long* buffer, unsigned short int offset, bool v
 	if(value) *buffer |= mask;
 }
 
-string getMcpName(string fname)
+string Huffman::getMcpName(string fname)
 {
 	int i=0;
 	string str = fname;
@@ -197,22 +196,25 @@ double Huffman::compression_percentage(double &percent_compressed,int compressed
 	return percent_compressed;
 }
 
-string setMcpName(string fname)
+string Huffman::setMcpName(string fname)
 {
-	int i=0;
-	string temp;
-	while (!fname.length())
+	string temp =fname;
+	bool found = false;
+	for(int i=0; i<temp.length();i++)
 	{	
-		if(fname[i] == '.') 
+		cout << " temp[" << i << "] in for loop = " << temp[i] << endl;
+		if(temp[i] == '.') 
 		{
-			fname[i+1]='m';
-			fname[i+1]='c';
-			fname[i+1]='p';
+			found =true;
+			cout << " temp[i] = " << temp[i];
+			temp[i+1]='m';
+			temp[i+2]='c';
+			temp[i+3]='p';
+			return temp;
 		}
-		i++;
 	}
-	cout << "temp = " << temp << endl;
-	return temp = fname;
+	if (found == false) cout << "Not a valid file!" << endl;
+		return temp;
 }
 
 int Huffman::readHeader(string hfile)
@@ -283,11 +285,12 @@ int Huffman::readHeader(string hfile)
 	return 0;
 }
 
-void Huffman::populateHeader(string h_name) // Write the header
+void Huffman::writeHeader() // Write the header
 {
-	ofstream outf(h_name.c_str());
+	file_to_compress = setMcpName(file_to_compress);
+	ofstream outf(file_to_compress.c_str());
 	outf << MAGIC_NUMBER << endl; //write magic number
-	outf << h_name << endl; //Write file name
+	outf << file_to_compress << endl; //Write file name
 	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence; //Write the active characters and their counts
 	outf << DELIM << DELIM << endl; //Write char table and int with with double delimiter
 
