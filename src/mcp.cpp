@@ -16,16 +16,10 @@ int main(int argv, char **argc)
 	//example compress
 	huffman.bufferMessage();
 	huffman.populateTable();
-	//huffman.showCharCount();
 	huffman.sortTable();
-	//huffman.printSorted();
 	huffman.populate_trie();
-	//huffman.get_encoding();
-	//huffman.test();
-	//huffman.printBinary();
-	//huffman.print_encoding_table();
-	//huffman.compress();
-	//huffman.print_huffman();
+	huffman.get_encoding();
+	huffman.compress();
 	huffman.writeHeader();
 	//huffman.readHeader(hfile);
 	//huffman.decompress();

@@ -287,13 +287,12 @@ int Huffman::readHeader(string hfile)
 
 void Huffman::writeHeader() // Write the header
 {
-	file_to_compress = setMcpName(file_to_compress);
-	ofstream outf(file_to_compress.c_str());
+	file_to_decompress = setMcpName(file_to_compress);
+	ofstream outf(file_to_decompress.c_str());
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << file_to_compress << endl; //Write file name
 	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence; //Write the active characters and their counts
 	outf << DELIM << DELIM << endl; //Write char table and int with with double delimiter
-
 	for(unsigned long int i=0;i<h_len;i++) outf << huffman_buffer[i]; outf << endl; //write the huffman code 
     	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
