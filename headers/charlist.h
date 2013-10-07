@@ -21,6 +21,7 @@ class CharList
 	string file_to_compress;
 	string file_to_decompress;
 	unsigned long int len;
+	unsigned long int enc_len;
 	unsigned long int h_len;
 	void delBuckets(CharBucket* buckets);	
 	void swap(unsigned char* &a, unsigned char* &b);
@@ -31,7 +32,6 @@ class CharList
 	
 	CharNode charTable[UCHAR_MAX]; //Create a lookup table for every ascii character		
 	unsigned char* charSort[UCHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
-	vector<string> mylist;
 	public:
 
 	CharList(); //default constructor

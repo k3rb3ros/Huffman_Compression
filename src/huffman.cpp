@@ -1,5 +1,5 @@
 /*
-* By Jesse Blagg and Ryan Morris
+t By Jesse Blagg and Ryan Morris
 * Huffman Compression program
 * for CSCI 480
 * September 2014
@@ -14,10 +14,18 @@ Huffman::Huffman()
 
 bool Huffman::delim_match(string &buffer, const string delim)
 {
+	string temp = "";
 	unsigned int length = buffer.length();
 	if(length <= delim.length()) return false;
-	if(buffer[length-5] == delim[0] && buffer[length-4] == delim[1] && buffer[length-3] == delim[2] && buffer[length-1] == delim[3]) return true;
-	cout << "Comparing  "<< (int)buffer[length-5] << (int)buffer[length-4] << (int)buffer[length-3] << (int)buffer[length-2] << " with " << (int)delim[0] << (int)delim[1] << (int)delim[2] << (int)delim[3] << endl;
+	else
+	{
+		temp = buffer.substr(length-(delim.length()), delim.length());
+		if(temp.compare(delim) == 0)
+		{
+			buffer.erase(length-delim.length(), delim.length()); //eat the final delimanting pattern
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -39,28 +47,24 @@ bool Huffman::get_ulbit(unsigned long int* buffer, unsigned short int offset)//g
 
 void Huffman::dump_buffer()
 {
-	ofstream write("test.dat");
-	for(unsigned int i=0; i<len; i++)
+	ofstream write("debug.dat");
+	for(unsigned int i=0; i<enc_len; i++)
 	{
-		write << "/" << (int)message_buffer[i];
+		write << "/" << (int)huffman_buffer[i];
 	}
 	write.close();
 }
 
 unsigned long int Huffman::get_Line(ifstream& inf, string &buffer , const string &delim)
 {
-	unsigned int i = 0;
 	char ch = 0;
 
-	cout << "getLine() " << endl;	
-	while(buffer.length() <= 4 || ch!= '\n')//!delim_match(buffer, delim)) //while we haven't reached our double delimeter
+	while(buffer.length() <= 4 || !delim_match(buffer, delim)) //while we haven't reached our double delimeter
 	{
 		inf.get(ch);
 		buffer += ch;
-		i++;
 	}	
-	cout << "Done " << i << "Characters long " << endl;
-	return i;
+	return 1;
 }
 
 /* Created with the help of Dr. MacEvoy */
@@ -118,7 +122,7 @@ void Huffman::compress() //compress the original message
 		}
 	}
 	if(huffman_buffer[index] != 0) huffman_buffer[index++]; //nullpad the buffer if it isn't already
-	h_len = index+1; //index; //return the length of the huffman trie in bytes
+	enc_len = index+1; //index; //return the length of the huffman trie in bytes
 }
 
 void Huffman::decompress() //decompress our Huffman encoded message
@@ -147,7 +151,7 @@ void Huffman::decompress() //decompress our Huffman encoded message
 		length = 0; //reset the bitcount 
 		Test = root; //set the test node to the Root of the Trie
 		
-		while(!is_a_leaf(Test) && (length <= h_len*8))
+		while(!is_a_leaf(Test) && (length <= enc_len*8))
 		{
 			bit = (get_chbit(huffman_buffer, index, bit_count++));// get the current bit in the buffer
 			cout << bit;
@@ -169,7 +173,8 @@ void Huffman::decompress() //decompress our Huffman encoded message
 }
 
 void Huffman::table_char_count(string table)
-{	
+{
+/*	
 	string temp_str;
 	string str;
 	int temp_num=0;
@@ -191,9 +196,10 @@ void Huffman::table_char_count(string table)
 		{
 			temp_num += atoi(mylist[j].c_str());	
 		}
-		h_len = temp_num; //Set the length of the header file in the class
-		cout << "Characters in table: " << h_len << endl;
-		huffman_buffer = new unsigned char[h_len]; //allocate the buffer for the size we need
+		enc_len = temp_num; //Set the length of the header file in the class
+		cout << "Characters in table: " << enc_len << endl;
+		huffman_buffer = new unsigned char[enc_len]; //allocate the buffer for the size we need
+*/
 }
 
 void Huffman::deleteVector(vector<string> mylist)
@@ -236,8 +242,7 @@ int Huffman::readHeader()
 	string tableFile = ".mcp_temp";
 	string m_number;
 	string f_name;
-	//string table;
- 	const string double_delim = "\1\27\1\27";
+ 	const string double_delim = "\1\27\1\27\n";
 	string enc_text;
 	string e_o_f;
 	ifstream inf(file_to_decompress.c_str());
@@ -260,39 +265,10 @@ int Huffman::readHeader()
 		setFileToCompress(f_name); //Save the original file name so we can write to it later
 		cout << "Original file: " << f_name << endl;
 		get_Line(inf, table, double_delim);
-		cout << "get_Line() done" << endl;
-		/*
-		getline(inf,table);
-		
-		//extract table data from header file
-		while(!done)
-		{
-			inf.get(t_char);
-			table+=t_char;
-			//make a string comparison with the last four characters in the array in order to break the loop.
-			if(i++ > 4 && table.compare(table.length()-4,4,double_delim)==0) done=true;
-		}
-
-		//remove delimiters from table and replace them with white space 
-		i=0;
-		while(i!=table.length())
-		{
-			t_char=table[i];
-			if(t_char=='\1' || t_char=='\27')
-			{	
-				table[i]=' ';		
-			}
-			i++;
-		}
-		out << table;
-		table_char_count(table);
-		out.close();*/
-		//call Function to populat charTableHere
-		
-		getline(inf,enc_text);
-		//bufferHuffman(enc_text);
+		get_Line(inf, enc_text, double_delim);
+		enc_len = enc_text.length();
+		bufferHuffman(enc_text);
 		getline(inf, e_o_f);
-		cout << hex << e_o_f << endl;
 	}
 	inf.close();
 	return 1;
@@ -300,13 +276,15 @@ int Huffman::readHeader()
 
 void Huffman::writeHeader() // Write the header
 {
+	ofstream debug("compress.dat");
 	file_to_decompress = setMcpName(file_to_compress);
 	ofstream outf(file_to_decompress.c_str());
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << file_to_compress << endl; //Write file name
-	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence << " "; //Write the active characters and their counts
-	outf << DELIM << DELIM << endl; //Write char table and int with with double delimiter
-	for(unsigned long int i=0;i<h_len;i++) outf << huffman_buffer[i]; outf << endl; //write the huffman code 
+	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf << charTable[i].character << charTable[i].occurrence << DELIM; //Write the active characters and their counts
+	outf << DELIM << endl; //Write char table and int with with double delimiter
+	for(unsigned long int i=0;i<enc_len;i++) outf << huffman_buffer[i]; outf << DELIM << DELIM << endl; //write the huffman code 
+	for(unsigned long int i=0;i<enc_len;i++) debug << "\\" << (int)huffman_buffer[i]; 
     	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
 }
@@ -315,25 +293,26 @@ void Huffman::print_orig()
 {
 	
 	cout << "########START UNCOMPRESSED BUFFER########\n";
-	for(unsigned int i=0; i<h_len; i++)
+	for(unsigned int i=0; i<len; i++)
 	{
-		cout << "\\" << huffman_buffer[i];
+		cout << message_buffer[i];
 	}
-	cout << "\n########END UNCOMPRESSED BUFFER " << h_len << " characters########\n";
+	cout << "\n########END UNCOMPRESSED BUFFER " << enc_len << " characters########\n";
 }
 
 void Huffman::print_huffman()
 {
 	cout << "########START HUFFMAN BUFFER########\n";
-	for(unsigned int i=0; i<h_len; i++)
+	for(unsigned int i=0; i<enc_len; i++)
 	{
 		cout << "\\" << (int)huffman_buffer[i];
 	}
-	cout << "\n########END HUFFMAN BUFFER " << h_len << " characters########\n";
+	cout << "\n########END HUFFMAN BUFFER " << enc_len << " characters########\n";
 }
 
 void Huffman::test()
 {
+	dump_buffer();
 }	
 
 Huffman::~Huffman() //Destructor deletes entire header

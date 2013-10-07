@@ -15,6 +15,7 @@
 	#include <sstream>
 	#include <stack>
     	#include <stdio.h>
+	#include <string>
 	#include <string.h>
 	#include <vector>
 	#include <stdlib.h>

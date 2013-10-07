@@ -18,10 +18,10 @@ void Mcp::compress(char* file_name)
 	cout << "Table populated" << endl;
 	huffman.sortTable(); //Sort the table by occurrence
 	cout << "Table sorted" << endl;
-	huffman.printSorted();
 	huffman.populate_trie(); //Make and populate the huffman trie
 	cout << "Trie built" << endl;
 	huffman.get_encoding(); //Generate the bitcodes
+	huffman.printBinary();
 	cout << "Bit codes generated"  << endl;
 	cout << "Compressing..." << endl;
 	huffman.compress(); //Compress the contents of the file to bitcode
@@ -43,11 +43,10 @@ void Mcp::decompress(char* file_name)
 		cout << "Lookup Table populated" << endl;
 		huffman.sortTable();
 		cout << "Lookup Table sorted by ocurrence" << endl;
-		huffman.printSorted();
 		huffman.populate_trie();
 		cout << "Trie built" << endl;
-		huffman.get_encoding();
-		huffman.print_encoding_table();
+		//huffman.get_encoding();
+		huffman.printBinary();
 		huffman.decompress();
 		cout << "File Decompressed" << endl;
 		huffman.print_orig();

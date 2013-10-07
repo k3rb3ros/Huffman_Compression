@@ -16,6 +16,7 @@ CharList::CharList()
 	file_to_decompress = "";
 	len = 0;
 	h_len = 0;
+	enc_len = 0;
 	table_len = 0;
 	table = "";
 	for(unsigned char i=0; i<UCHAR_MAX; i++)
@@ -81,8 +82,6 @@ void CharList::bufferMessage(string fname)
 			in >> message_buffer[i];
 			i++;
 		}			
-		//cout << "Read " << len << " characters... ";
-		// read data as a block:
 	
 		if(in) cout << file_to_compress << " buffered succesfully\n";
 		else 
@@ -102,10 +101,11 @@ void CharList::bufferMessage(string fname)
 		//cout << endl << " length is = " << len << endl;
 }
 
-void CharList::bufferHuffman(string &data) //write the getline string to the huffman buffer
+void CharList::bufferHuffman(string &data) //write the get_Line string to the huffman buffer
 {
+	huffman_buffer = new unsigned char[enc_len]; //allocate the buffer
 	cout << "Data buffer " << data << endl;
-	for(int i=0; i<data.length(); i++) huffman_buffer[i] = data[i];
+	for(int i=0; i<data.length(); i++) huffman_buffer[i] = data[i]; //populated it
 }
 
 void CharList::CompPopulateTable()
@@ -130,18 +130,28 @@ void CharList::CompPopulateTable()
 
 void CharList::DecompPopulateTable()
 {
-	string temp_char = "";
+	bool done = false;
+	short int delim = 0;
+	short int i = 0;
 	string temp_count = "";
 	unsigned char ch = 0;
-	for(int i=0; i<table.length(); i++)
+	unsigned long int char_count = 0;
+	len = 0;
+	table_len = 0;
+	while(!done)
 	{
-		cout << "\\" << table[i];
-		//ch = mylist[i][0];
-		//ch = temp_char[0];	
-		//temp_count = mylist[i+1];//get the count
-		
-		//charTable[ch].active = true; //set the character to active
-		//charTable[ch].occurrence = strtoul(temp_count.c_str(), NULL, 0); //set the character count of that character in the charlist
+		ch = table[i]; //get the character
+		charTable[ch].active = true; //set the character to active
+		table_len++;//increment the table length
+		delim = i; //set delim to the next character	
+		while(table[delim] != 1 && table[delim+1] != 27) delim++; //get the value of the next delimiting character
+		i++; //increment i
+		temp_count = table.substr(i, delim-i); //get the count
+		char_count = strtoul(temp_count.c_str(), NULL, 0);
+		len += char_count; //set the length of the original file
+		charTable[ch].occurrence = char_count;
+		i = delim+2;//update i to point to the next character
+		if(i >= table.length()) done = true; //check if we need to break the loop
 	}
 }
 
