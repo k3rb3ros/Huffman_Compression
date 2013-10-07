@@ -14,8 +14,8 @@
 #include "structs.h"
 
 #define MAGIC_NUMBER 0x63130
-#define MAX_BIT_SIZE sizeof(unsigned long int)*8
-#define U_LONG_INT_SIZE sizeof(unsigned long int)
+#define MAX_BIT_SIZE sizeof(uint64_t)*8
+#define U_LONG_INT_SIZE sizeof(uint64_t)
 #define DELIM "\1\27"
 #define H_BUF len
 #define O_EOF '\26'
@@ -29,14 +29,14 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	string encoded_text;
 
 	bool delim_match(string &buffer, const string delim);
-	bool get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offet);
-	bool get_ulbit(unsigned long int* buffer, unsigned short int offset);
+	bool get_chbit(unsigned char* buffer, uint64_t index, unsigned short int offet);
+	bool get_ulbit(uint64_t* buffer, unsigned short int offset);
 	string getMcpName(string fname);
 	string setMcpName(string file_to_compress);
 	void dump_buffer();
-	unsigned long int get_Line(ifstream& inf, string &buffer, const string &delim);
-	void set_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset, bool value);
-	void set_ulbit(unsigned long int* buffer, unsigned short int offset, bool value); 
+	uint64_t get_Line(ifstream& inf, string &buffer, const string &delim);
+	void set_chbit(unsigned char* buffer, uint64_t index, unsigned short int offset, bool value);
+	void set_ulbit(uint64_t* buffer, unsigned short int offset, bool value); 
 
 	public:
 	Huffman();

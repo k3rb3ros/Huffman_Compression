@@ -18,7 +18,7 @@ Trie::Trie() //Constructor inits root node
 	root -> right = NULL;
 }
 
-Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned long int val)
+Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, uint64_t val)
 {
 	Trie_node* knew_node = NULL;
 	Trie_node* knew_root = NULL;
@@ -50,7 +50,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, unsigned 
 	return knew_root; //knew_root;
 }
 
-Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, unsigned long int val1, unsigned char char2, unsigned long int val2)
+Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, uint64_t val1, unsigned char char2, uint64_t val2)
 {
 	Trie_node* knew_root = NULL;
 	Trie_node* knew_parent = NULL;
@@ -135,23 +135,23 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 	Root = NULL; //set the pointer to Null to prevent any confusion that Root has been erased
 }
 
-int Trie::enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcode, unsigned short int length) //Recursively traverse the Trie and get the bitcode for ever active character
+int Trie::enc_traverse(Trie_node* Root, short int bit, uint64_t bitcode, unsigned short int length) //Recursively traverse the Trie and get the bitcode for ever active character
 {
 	bool is_char = false;
 	short int* code_length = NULL;
 	unsigned char ch = 0;
-	unsigned long int* code = NULL;
-	unsigned long int mask = 0x8000000000000000;
+	uint64_t* code = NULL;
+	uint64_t mask = 0x8000000000000000;
 
 	if(Root == NULL) return 0; //no Trie to traverse
 	
-	if((bit == 0 || bit == 1) && length <= sizeof(unsigned long int)*8) // if we have recursed at least 1 level deep then add the bit for the direction we traversed
+	if((bit == 0 || bit == 1) && length <= sizeof(uint64_t)*8) // if we have recursed at least 1 level deep then add the bit for the direction we traversed
 	{ //write bits the the buffer big endian style
 		mask >>= length; //shift the mask by the depth of the traversal (number of bits)
 		if(bit == 1) bitcode |= mask; //write the bitcode to buffer 
 		length ++; 
 	}		
-	else if(length > sizeof(unsigned long int)*8) 
+	else if(length > sizeof(uint64_t)*8) 
 	{
 		cerr << "Unsigned long int overflow error, cannot continue" << endl;
 		return -1;
@@ -189,8 +189,8 @@ void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing
 
 void Trie::print_binary(CharNode* Node)
 {
-	unsigned long int binary = 0;
-	unsigned long int mask = 0;
+	uint64_t binary = 0;
+	uint64_t mask = 0;
 	int len = Node -> encodeLength;
 	for(int i=0; i<len; i++)
 	{
@@ -202,7 +202,7 @@ void Trie::print_binary(CharNode* Node)
 }
 
 void Trie::printBinary(){
-	//unsigned long int temp = 0;
+	//uint64_t temp = 0;
 	//int len = 0;
 	for(unsigned char i=0;i<UCHAR_MAX;i++)
 	{
@@ -216,7 +216,7 @@ void Trie::printBinary(){
 		}
 	}
 }
-unsigned long int Trie::sum_nodes(Trie_node* Root, unsigned long int sum)
+uint64_t Trie::sum_nodes(Trie_node* Root, uint64_t sum)
 {	
 	if(Root == NULL) return sum;
 	sum += sum_nodes(Root->left, sum);
@@ -230,13 +230,13 @@ bool Trie::is_a_leaf(Trie_node* Node) //return true if the Node passed in is a l
 	return (Node -> left == NULL && Node -> right == NULL);
 }
 
-unsigned long int Trie::character_count() //Recursively count the number of characters represented by the Trie **FOR DEBUGGING**
+uint64_t Trie::character_count() //Recursively count the number of characters represented by the Trie **FOR DEBUGGING**
 {
 	count_traverse(root);
 	return char_count;
 }
 
-unsigned long int Trie::size_of_trie() //Recursively count the number of nodes i the trie **FOR DEBUGGING**
+uint64_t Trie::size_of_trie() //Recursively count the number of nodes i the trie **FOR DEBUGGING**
 {
 	node_traverse(root);
 	return node_count;
@@ -247,8 +247,8 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 	bool even = false;
 	unsigned char char1 = 0;
 	unsigned char char2 = 0;
-	unsigned long int occur1 = 0;
-	unsigned long int occur2 = 0;
+	uint64_t occur1 = 0;
+	uint64_t occur2 = 0;
 	
 	if(table_len %2 == 0) even = true; 
 	for(unsigned char i=(UCHAR_MAX-table_len); i<UCHAR_MAX; i++) 

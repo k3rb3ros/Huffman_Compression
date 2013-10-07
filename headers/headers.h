@@ -8,6 +8,7 @@
 #ifndef HEADERS_H
 #define HEADERS_H
 	#include <assert.h>
+	#include <cstdint>
 	#include <iostream>
 	#include <fstream>
 	#include <limits.h>

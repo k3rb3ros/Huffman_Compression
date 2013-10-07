@@ -32,13 +32,13 @@ CharList::CharList()
 	}
 }
 
-void CharList::sortTable()
+void CharList::sortTable() //bubble sort the values of our lookup table by occurrence
 {
 	for(int i=0; i<UCHAR_MAX; i++)
 	{
 		for(int j=0; j<UCHAR_MAX-1; j++)
 		{
-		if(((CharNode*) &*(charSort[j]))->occurrence > ((CharNode*) &*(charSort[j+1]))->occurrence)
+		if(((CharNode*) (charSort[j]))->occurrence > ((CharNode*) (charSort[j+1]))->occurrence)
 			{
 				swap(charSort[j], charSort[j+1]);
 			}
@@ -63,7 +63,7 @@ void CharList::swap(unsigned char* &a, unsigned char* &b)
 
 void CharList::bufferMessage(string fname)
 {
-	unsigned long int i = 0;
+	uint64_t i = 0;
 
 	file_to_compress = fname; //add the filename to the class to use later
 	ifstream in(file_to_compress.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
@@ -135,7 +135,7 @@ void CharList::DecompPopulateTable()//Populate the lookup table from the char, c
 	short unsigned int i = 0;
 	string temp_count = "";
 	unsigned char ch = 0;
-	unsigned long int char_count = 0;
+	uint64_t char_count = 0;
 	len = 0;
 	table_len = 0;
 	cout << table << endl;

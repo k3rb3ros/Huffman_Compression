@@ -20,9 +20,9 @@ class CharList
 	int charOccurrence;
 	string file_to_compress;
 	string file_to_decompress;
-	unsigned long int len;
-	unsigned long int enc_len;
-	unsigned long int h_len;
+	uint64_t len;
+	uint64_t enc_len;
+	uint64_t h_len;
 	void delBuckets(CharBucket* buckets);	
 	void swap(unsigned char* &a, unsigned char* &b);
 	
