@@ -5,8 +5,8 @@
 * September 2014
 */
 
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef HUFFMAN_H
+#define HUFFMAN_H
 
 #include "charlist.h"
 #include "headers.h"
@@ -27,11 +27,9 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	
 	string header_table;
 	string encoded_text;
-	vector<string> mylist;
 
 	bool get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offet);
 	bool get_ulbit(unsigned long int* buffer, unsigned short int offset);
-	int search(unsigned long int* pattern, unsigned short int* length, unsigned char* huffman_character);
 	string getMcpName(string fname);
 	string setMcpName(string file_to_compress);
 	void dump_buffer();
@@ -43,11 +41,13 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	void compress();
 	void decompress();
 	int readHeader();
+	vector<string> mylist;
 	void writeHeader();
 	void print_huffman();
 	
 	double compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count);
 	void deleteVector(vector<string> mylist);
+	void set_f_name(string fname);
 	void table_char_count(string table);
 	void test();
 	~Huffman();

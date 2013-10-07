@@ -28,28 +28,6 @@ bool Huffman::get_ulbit(unsigned long int* buffer, unsigned short int offset)//g
 	return (*buffer & mask) != 0;
 }
 
-int Huffman::search(unsigned long int* pattern, unsigned short int* length, unsigned char* huffman_character)
-{
-	cout << "searching for: " << hex << *pattern << endl;
-	for(short int ch=UCHAR_MAX; ch >= 0; ch--)
-	{
-		unsigned long int count = ((CharNode*) &*(charSort[ch]))->occurrence;
-		while(count != *length && ch >= 0)
-		{
-			if(count == 0 || (ch == 0 && (count != *length))) return -1; //if there isn't a bitcode length match, then stop searching
-			count = ((CharNode*) &*(charSort[--ch]))->occurrence; //decrement our search table index until we find bitcodes of the same length
-			//cout << "search: " << ch << endl;
-		}
-		if(*pattern == ((CharNode*) &*(charSort[ch]))->encoding)//If this is true we found a match
-		{
-			*huffman_character = (unsigned char)ch;
-			cout << "Match found character is:" << (unsigned char)ch << endl;
-			return 1; //return success
-		}	
-	}
-	return -1;
-}
-
 void Huffman::dump_buffer()
 {
 	ofstream write("test.dat");
@@ -160,6 +138,11 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	}
 }
 
+void Huffman::set_f_name(string fname)
+{
+	file_to_decompress = fname;
+}
+
 void Huffman::table_char_count(string table)
 {	
 	string temp_str;
@@ -223,7 +206,6 @@ int Huffman::readHeader()
 	int i=0;
 	int f_len = file_to_decompress.size();
 	bool done = false;
-	//	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
 	char t_char;
 	string tableFile = ".mcp_temp";
 	string m_number;
@@ -234,6 +216,7 @@ int Huffman::readHeader()
 	string e_o_f;
 	ifstream inf(file_to_decompress.c_str());
 	ofstream out(tableFile.c_str());
+	cout << file_to_decompress << endl;
 	if(!inf) cerr << "Error reading file..." << endl;
 	else 
 	{

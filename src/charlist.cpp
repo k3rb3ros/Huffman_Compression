@@ -59,10 +59,11 @@ void CharList::swap(unsigned char* &a, unsigned char* &b)
 	b = temp;
 }
 
-void CharList::bufferMessage()
+void CharList::bufferMessage(string fname)
 {
 	unsigned long int i = 0;
 
+	file_to_compress = fname; //add the filename to the class to use later
 	ifstream in(file_to_compress.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
 		
 	if (in.good()) 
@@ -85,7 +86,7 @@ void CharList::bufferMessage()
 		if(in) cout << file_to_compress << " buffered succesfully\n";
 		else 
 		{
-			cout << "Error buffering message file! " << in.gcount() << " only characters could be read";
+			cerr << "Error buffering message file! " << in.gcount() << " only characters could be read";
 			return;
 		}
 		in.close(); //close the fstream
@@ -100,10 +101,11 @@ void CharList::bufferMessage()
 		//cout << endl << " length is = " << len << endl;
 }
 
-void CharList::bufferHuffman()
+void CharList::bufferHuffman(string fname)
 {
 	unsigned long int i = 0;
 
+	file_to_decompress = fname;
 	ifstream in(file_to_decompress.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
 	if(in.good())
 	{
@@ -200,6 +202,16 @@ void CharList::showCharCount()
 			cout << "|" << i << "| " << charTable[i].occurrence << ", ";
 		}
 	}
+}
+
+void CharList::setFileToCompress(string f_name)
+{
+	file_to_compress = f_name;
+}
+
+void CharList::setFileToDecompress(string f_name)
+{
+	file_to_decompress = f_name;
 }
 
 CharList::~CharList()

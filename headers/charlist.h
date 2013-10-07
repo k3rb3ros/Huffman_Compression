@@ -34,13 +34,15 @@ class CharList
 	public:
 
 	CharList(); //default constructor
-	void bufferMessage(); //Name changed so that it makes more sense
-	void bufferHuffman();
+	void bufferMessage(string fname); //Name changed so that it makes more sense
+	void bufferHuffman(string fname);
 	void CompPopulateTable();
 	void DecompPopulateTable(vector<string> charlist);
 	void printMessageBuffer();
 	void printSorted();
 	void showCharCount();
+	void setFileToCompress(string fname);
+	void setFileToDecompress(string fname);
 	void sortTable();
 	~CharList(); //Destructor
 };
