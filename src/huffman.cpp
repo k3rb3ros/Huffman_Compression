@@ -202,11 +202,9 @@ string Huffman::setMcpName(string fname)
 	bool found = false;
 	for(int i=0; i<temp.length();i++)
 	{	
-		cout << " temp[" << i << "] in for loop = " << temp[i] << endl;
 		if(temp[i] == '.') 
 		{
 			found =true;
-			cout << " temp[i] = " << temp[i];
 			temp[i+1]='m';
 			temp[i+2]='c';
 			temp[i+3]='p';
@@ -217,23 +215,23 @@ string Huffman::setMcpName(string fname)
 		return temp;
 }
 
-int Huffman::readHeader(string hfile)
+int Huffman::readHeader()
 {
 	int num;
 	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
 	int i=0;
-	int f_len = hfile.size();
+	int f_len = file_to_decompress.size();
 	bool done = false;
 	//	cout << endl << endl << "  charmax = " << UCHAR_MAX << endl << endl;
 	char t_char;
-	string tableFile = "tableFile.txt";
+	string tableFile = ".mcp_temp";
 	string m_number;
 	string f_name;
 	string table;
 	string double_delim = "\1\27\1\27";
 	string enc_text;
 	string e_o_f;
-	ifstream inf(hfile.c_str());
+	ifstream inf(file_to_decompress.c_str());
 	ofstream out(tableFile.c_str());
 	if(!inf) cout << "Error reading file..." << endl;
 	else 
@@ -291,7 +289,7 @@ void Huffman::writeHeader() // Write the header
 	ofstream outf(file_to_decompress.c_str());
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << file_to_compress << endl; //Write file name
-	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence; //Write the active characters and their counts
+	for(unsigned char i=0; i<UCHAR_MAX; i++) if(charTable[i].active) outf <<  charTable[i].character << DELIM << charTable[i].occurrence << " "; //Write the active characters and their counts
 	outf << DELIM << DELIM << endl; //Write char table and int with with double delimiter
 	for(unsigned long int i=0;i<h_len;i++) outf << huffman_buffer[i]; outf << endl; //write the huffman code 
     	outf << O_EOF; //write our "Output" EOF character

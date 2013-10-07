@@ -21,7 +21,7 @@ int main(int argv, char **argc)
 	huffman.get_encoding();
 	huffman.compress();
 	huffman.writeHeader();
-	//huffman.readHeader(hfile);
+	huffman.readHeader();
 	//huffman.decompress();
 	//huffman.printMessageBuffer();
 	while(getchar() != '\n');

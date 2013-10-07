@@ -42,7 +42,7 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	Huffman();
 	void compress();
 	void decompress();
-	int readHeader(string hfile);
+	int readHeader();
 	void writeHeader();
 	void print_huffman();
 	
