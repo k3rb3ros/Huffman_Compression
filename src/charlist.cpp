@@ -12,11 +12,12 @@ CharList::CharList()
 	message_buffer = NULL;
 	huffman_buffer = NULL;
 	charOccurrence = -1;
-	file_to_compress = "us_constitution.txt";
+	file_to_compress = "";
 	file_to_decompress = "";
 	len = 0;
 	h_len = 0;
 	table_len = 0;
+	table = "";
 	for(unsigned char i=0; i<UCHAR_MAX; i++)
 	{
 		charTable[i].active = false;
@@ -101,40 +102,10 @@ void CharList::bufferMessage(string fname)
 		//cout << endl << " length is = " << len << endl;
 }
 
-void CharList::bufferHuffman(string fname)
+void CharList::bufferHuffman(string &data) //write the getline string to the huffman buffer
 {
-	unsigned long int i = 0;
-
-	file_to_decompress = fname;
-	ifstream in(file_to_decompress.c_str(), std::ios::in | std::ios::binary); //attempt to open a binary filestream to the message file
-	if(in.good())
-	{
-		in.seekg(0, in.end); //Go to end of stream
-		h_len = in.tellg(); //Get the length of the file
-		message_buffer = new unsigned char[len+1];
-		message_buffer[len] = 0; //null terminate the string
-		in.seekg(0, in.beg); //Reset stream to beginning
-		in >> noskipws; //tell fstream not to ignore whitespace
-			
-		while(i!=len)
-		{
-			in >> huffman_buffer[i];
-			i++;
-		}
-			
-		if(in) cout << file_to_decompress << " buffered succesfully\n";
-		else
-		{
-			cout << "Error buffering compressed file! " << in.gcount() << " only characters could be read";
-			return;
-		}
-		in.close();
-	}
-	else
-	{
-		cerr << " Unable to buffer compressed file " << file_to_decompress << " exiting\n";
-		return;
-	}
+	cout << "Data buffer " << data << endl;
+	for(int i=0; i<data.length(); i++) huffman_buffer[i] = data[i];
 }
 
 void CharList::CompPopulateTable()
@@ -157,19 +128,26 @@ void CharList::CompPopulateTable()
 	}
 }
 
-void CharList::DecompPopulateTable(vector<string> char_list)
+void CharList::DecompPopulateTable()
 {
+	string temp_char = "";
 	string temp_count = "";
 	unsigned char ch = 0;
-	for(int i=0; i<char_list.size(); i+=2)
+	for(int i=0; i<table.length(); i++)
 	{
-		ch = char_list[i][0];
+		cout << "\\" << table[i];
+		//ch = mylist[i][0];
 		//ch = temp_char[0];	
-		temp_count = char_list[i+1];//get the count
+		//temp_count = mylist[i+1];//get the count
 		
-		charTable[ch].active = true; //set the character to active
-		charTable[ch].occurrence = strtoul(temp_count.c_str(), NULL, 0); //set the character count of that character in the charlist
+		//charTable[ch].active = true; //set the character to active
+		//charTable[ch].occurrence = strtoul(temp_count.c_str(), NULL, 0); //set the character count of that character in the charlist
 	}
+}
+
+void CharList::getFileToDecompress()
+{
+	cout << "Filepath " << file_to_decompress << " length:" << file_to_decompress.length() << endl;
 }
 
 void CharList::printMessageBuffer()

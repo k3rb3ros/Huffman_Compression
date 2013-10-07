@@ -27,17 +27,20 @@ class CharList
 	
 	protected:
 	short int table_len;
+	string table;
 	
 	CharNode charTable[UCHAR_MAX]; //Create a lookup table for every ascii character		
 	unsigned char* charSort[UCHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
-
+	vector<string> mylist;
 	public:
 
 	CharList(); //default constructor
 	void bufferMessage(string fname); //Name changed so that it makes more sense
-	void bufferHuffman(string fname);
+	void bufferHuffman(string &
+data);
 	void CompPopulateTable();
-	void DecompPopulateTable(vector<string> charlist);
+	void DecompPopulateTable();
+	void getFileToDecompress();
 	void printMessageBuffer();
 	void printSorted();
 	void showCharCount();

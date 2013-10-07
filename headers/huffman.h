@@ -28,11 +28,13 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	string header_table;
 	string encoded_text;
 
+	bool delim_match(string &buffer, const string delim);
 	bool get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offet);
 	bool get_ulbit(unsigned long int* buffer, unsigned short int offset);
 	string getMcpName(string fname);
 	string setMcpName(string file_to_compress);
 	void dump_buffer();
+	unsigned long int get_Line(ifstream& inf, string &buffer, const string &delim);
 	void set_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset, bool value);
 	void set_ulbit(unsigned long int* buffer, unsigned short int offset, bool value); 
 
@@ -41,13 +43,13 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	void compress();
 	void decompress();
 	int readHeader();
-	vector<string> mylist;
+	//vector<string> mylist;
 	void writeHeader();
+	void print_orig();
 	void print_huffman();
 	
 	double compression_percentage(double &percent_compressed,int compressed_count,int uncompressed_count);
 	void deleteVector(vector<string> mylist);
-	void set_f_name(string fname);
 	void table_char_count(string table);
 	void test();
 	~Huffman();

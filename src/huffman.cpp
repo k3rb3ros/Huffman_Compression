@@ -8,8 +8,17 @@
 
 Huffman::Huffman()
 {
-		header_table = "";
-		encoded_text = "";
+	header_table = "";
+	encoded_text = "";
+}
+
+bool Huffman::delim_match(string &buffer, const string delim)
+{
+	unsigned int length = buffer.length();
+	if(length <= delim.length()) return false;
+	if(buffer[length-5] == delim[0] && buffer[length-4] == delim[1] && buffer[length-3] == delim[2] && buffer[length-1] == delim[3]) return true;
+	cout << "Comparing  "<< (int)buffer[length-5] << (int)buffer[length-4] << (int)buffer[length-3] << (int)buffer[length-2] << " with " << (int)delim[0] << (int)delim[1] << (int)delim[2] << (int)delim[3] << endl;
+	return false;
 }
 
 bool Huffman::get_chbit(unsigned char* buffer, unsigned long int index, unsigned short int offset)
@@ -36,6 +45,22 @@ void Huffman::dump_buffer()
 		write << "/" << (int)message_buffer[i];
 	}
 	write.close();
+}
+
+unsigned long int Huffman::get_Line(ifstream& inf, string &buffer , const string &delim)
+{
+	unsigned int i = 0;
+	char ch = 0;
+
+	cout << "getLine() " << endl;	
+	while(buffer.length() <= 4 || ch!= '\n')//!delim_match(buffer, delim)) //while we haven't reached our double delimeter
+	{
+		inf.get(ch);
+		buffer += ch;
+		i++;
+	}	
+	cout << "Done " << i << "Characters long " << endl;
+	return i;
 }
 
 /* Created with the help of Dr. MacEvoy */
@@ -106,6 +131,11 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	unsigned long int index = 0;
 	unsigned short int length = 0;
 
+	if(huffman_buffer == NULL) 
+	{
+		cerr << "Huffman buffer is empty exiting" << endl;
+		return;
+	}
 	if(message_buffer != NULL) delete[] message_buffer; //free anything in the buffer if it is already populated
 	
 	message_buffer = new unsigned char[len]; //allocate the buffer
@@ -138,11 +168,6 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	}
 }
 
-void Huffman::set_f_name(string fname)
-{
-	file_to_decompress = fname;
-}
-
 void Huffman::table_char_count(string table)
 {	
 	string temp_str;
@@ -167,7 +192,8 @@ void Huffman::table_char_count(string table)
 			temp_num += atoi(mylist[j].c_str());	
 		}
 		h_len = temp_num; //Set the length of the header file in the class
-		cout << "Characters in table: " << temp_num << endl;
+		cout << "Characters in table: " << h_len << endl;
+		huffman_buffer = new unsigned char[h_len]; //allocate the buffer for the size we need
 }
 
 void Huffman::deleteVector(vector<string> mylist)
@@ -210,13 +236,12 @@ int Huffman::readHeader()
 	string tableFile = ".mcp_temp";
 	string m_number;
 	string f_name;
-	string table;
-	string double_delim = "\1\27\1\27";
+	//string table;
+ 	const string double_delim = "\1\27\1\27";
 	string enc_text;
 	string e_o_f;
 	ifstream inf(file_to_decompress.c_str());
 	ofstream out(tableFile.c_str());
-	cout << file_to_decompress << endl;
 	if(!inf) cerr << "Error reading file..." << endl;
 	else 
 	{
@@ -226,14 +251,19 @@ int Huffman::readHeader()
 		stringstream convert(m_number); // stringstream used for the conversion initialized with the contents of the string
 		if ( !(convert >> num) )//give the value to an integer using the characters in the string
 		{
-			cout << "Not a valid compressed file. Exiting..." << endl;
+			cerr << "Not a valid compressed file. Exiting..." << endl;
 			return -1;
 		}
-		else cout << " Magic number matches!" << endl;	
+		else cout << "Magic number matches!" << endl;	
 		
 		getline(inf,f_name);
+		setFileToCompress(f_name); //Save the original file name so we can write to it later
 		cout << "Original file: " << f_name << endl;
-		getline(inf,table);	
+		get_Line(inf, table, double_delim);
+		cout << "get_Line() done" << endl;
+		/*
+		getline(inf,table);
+		
 		//extract table data from header file
 		while(!done)
 		{
@@ -256,13 +286,16 @@ int Huffman::readHeader()
 		}
 		out << table;
 		table_char_count(table);
-		out.close();
+		out.close();*/
 		//call Function to populat charTableHere
 		
 		getline(inf,enc_text);
+		//bufferHuffman(enc_text);
 		getline(inf, e_o_f);
+		cout << hex << e_o_f << endl;
 	}
-	return 0;
+	inf.close();
+	return 1;
 }
 
 void Huffman::writeHeader() // Write the header
@@ -276,6 +309,17 @@ void Huffman::writeHeader() // Write the header
 	for(unsigned long int i=0;i<h_len;i++) outf << huffman_buffer[i]; outf << endl; //write the huffman code 
     	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
+}
+
+void Huffman::print_orig()
+{
+	
+	cout << "########START UNCOMPRESSED BUFFER########\n";
+	for(unsigned int i=0; i<h_len; i++)
+	{
+		cout << "\\" << huffman_buffer[i];
+	}
+	cout << "\n########END UNCOMPRESSED BUFFER " << h_len << " characters########\n";
 }
 
 void Huffman::print_huffman()

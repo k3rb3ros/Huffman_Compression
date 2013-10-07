@@ -39,9 +39,6 @@ int main(int argv, char **argc)
 			print_usage();
 			return -1;
 		}
-		//cout << argc[0] << " " << argc[1] << " " << argc[2] << endl;
-		//	mcp.compress(argc[2]);
-		//	mcp.decompress(argc[2]);
 	}
 	else 
 	{
