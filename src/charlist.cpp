@@ -103,9 +103,9 @@ void CharList::bufferMessage(string fname)
 
 void CharList::bufferHuffman(string &data) //write the get_Line string to the huffman buffer
 {
-	huffman_buffer = new unsigned char[enc_len]; //allocate the buffer
-	cout << "Data buffer " << data << endl;
-	for(int i=0; i<data.length(); i++) huffman_buffer[i] = data[i]; //populated it
+	huffman_buffer = new unsigned char[enc_len+1]; //allocate the buffer
+	//cout << "Data buffer " << data << endl;
+	for(unsigned int i=0; i<data.length(); i++) huffman_buffer[i] = data[i]; //populated it
 }
 
 void CharList::CompPopulateTable()
@@ -128,16 +128,17 @@ void CharList::CompPopulateTable()
 	}
 }
 
-void CharList::DecompPopulateTable()
+void CharList::DecompPopulateTable()//Populate the lookup table from the char, count table we wrote to the header
 {
 	bool done = false;
 	short int delim = 0;
-	short int i = 0;
+	short unsigned int i = 0;
 	string temp_count = "";
 	unsigned char ch = 0;
 	unsigned long int char_count = 0;
 	len = 0;
 	table_len = 0;
+	cout << table << endl;
 	while(!done)
 	{
 		ch = table[i]; //get the character
@@ -147,7 +148,7 @@ void CharList::DecompPopulateTable()
 		while(table[delim] != 1 && table[delim+1] != 27) delim++; //get the value of the next delimiting character
 		i++; //increment i
 		temp_count = table.substr(i, delim-i); //get the count
-		char_count = strtoul(temp_count.c_str(), NULL, 0);
+		char_count = strtoul(temp_count.c_str(), NULL, 0); //conver it to a number
 		len += char_count; //set the length of the original file
 		charTable[ch].occurrence = char_count;
 		i = delim+2;//update i to point to the next character

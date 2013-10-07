@@ -135,7 +135,7 @@ void Trie::delete_trie(Trie_node* Root) //Recursively delete Trie data structure
 	Root = NULL; //set the pointer to Null to prevent any confusion that Root has been erased
 }
 
-void Trie::enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcode, unsigned short int length) //Recursively traverse the Trie and get the bitcode for ever active character
+int Trie::enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcode, unsigned short int length) //Recursively traverse the Trie and get the bitcode for ever active character
 {
 	bool is_char = false;
 	short int* code_length = NULL;
@@ -143,7 +143,7 @@ void Trie::enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcod
 	unsigned long int* code = NULL;
 	unsigned long int mask = 0x8000000000000000;
 
-	if(Root == NULL) return;
+	if(Root == NULL) return 0; //no Trie to traverse
 	
 	if((bit == 0 || bit == 1) && length <= sizeof(unsigned long int)*8) // if we have recursed at least 1 level deep then add the bit for the direction we traversed
 	{ //write bits the the buffer big endian style
@@ -154,6 +154,7 @@ void Trie::enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcod
 	else if(length > sizeof(unsigned long int)*8) 
 	{
 		cerr << "Unsigned long int overflow error, cannot continue" << endl;
+		return -1;
 	}
 	
 	is_char = Root -> is_character;
@@ -175,6 +176,7 @@ void Trie::enc_traverse(Trie_node* Root, short int bit, unsigned long int bitcod
 		*(code) = bitcode; //set the bitcode
 		*(code_length) = length; //set the code length
 	}
+ 	return 1;
 }
 
 void Trie::node_traverse(Trie_node* Root) //Recursively count the nodes existing in the Trie
@@ -277,9 +279,10 @@ void Trie::populate_trie() //Fills the trie data structure with sorted character
 	}
 }
 
-void Trie::get_encoding() //Recursively traverse the Trie and write the bitstring and length for every character in it
+int Trie::get_encoding() //Recursively traverse the Trie and write the bitstring and length for every character in it
 {
-	enc_traverse(root, -1, 0, 0);	
+	if(enc_traverse(root, -1, 0, 0)) return 1;
+	else return -1;	
 }
 
 void Trie::print_encoding_table()

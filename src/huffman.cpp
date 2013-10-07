@@ -108,7 +108,7 @@ void Huffman::compress() //compress the original message
 	
 	huffman_buffer = new unsigned char[H_BUF];//allocate the buffer
 	for(unsigned long int k=0; k<H_BUF; k++) huffman_buffer[k] = 0;
-	
+	cout << "message length " << len << endl;	
 	for(unsigned long int i=0; i<len; i++)
 	{	
 		ch = message_buffer[i]; //get the character we are encoding
@@ -117,12 +117,15 @@ void Huffman::compress() //compress the original message
 		
 		for(short int j=0; j<code_length; j++)
 		{
+			//if(get_ulbit(bit_code, j) == true) cout << "1";
+			//else cout << "0";
 			set_chbit(huffman_buffer, index, bit_count++ , get_ulbit(bit_code, j)); //write the bitcodes to the buffer
 			if(bit_count%8 == 0) index++;
 		}
 	}
-	if(huffman_buffer[index] != 0) huffman_buffer[index++]; //nullpad the buffer if it isn't already
+	//if(huffman_buffer[index] != 0) huffman_buffer[index++]; //nullpad the buffer if it isn't already
 	enc_len = index+1; //index; //return the length of the huffman trie in bytes
+	cout << "enc_len " << enc_len << endl;
 }
 
 void Huffman::decompress() //decompress our Huffman encoded message
@@ -131,7 +134,6 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	Trie_node* Test = NULL;
 	unsigned char ch = 0;
 	unsigned long int bit_count = 0;
-	unsigned long int current_bit_code = 0;
 	unsigned long int index = 0;
 	unsigned short int length = 0;
 
@@ -142,7 +144,7 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	}
 	if(message_buffer != NULL) delete[] message_buffer; //free anything in the buffer if it is already populated
 	
-	message_buffer = new unsigned char[len]; //allocate the buffer
+	message_buffer = new unsigned char[len+1]; //allocate the buffer
 	for(unsigned long int k=0; k<len; k++) message_buffer[k] = 0; //zero fill the buffer
 	
 	for(unsigned long int i=0; i<len; i++) //fill every character in the message buffer after it has been decoded
@@ -154,7 +156,7 @@ void Huffman::decompress() //decompress our Huffman encoded message
 		while(!is_a_leaf(Test) && (length <= enc_len*8))
 		{
 			bit = (get_chbit(huffman_buffer, index, bit_count++));// get the current bit in the buffer
-			cout << bit;
+			//cout << bit;
 			if(bit_count %8 == 0) index++; //incriment index every byte			
 			length++;
 			if(Test != NULL)
@@ -196,6 +198,7 @@ string Huffman::setMcpName(string fname)
 		return temp;
 }
 
+//sstream conversion found here: http://www.cplusplus.com/forum/articles/9645/
 int Huffman::readHeader()
 {
 	int num;
@@ -214,9 +217,7 @@ int Huffman::readHeader()
 	if(!inf) cerr << "Error reading file..." << endl;
 	else 
 	{
-		getline(inf,m_number);
-    
-		//sstream conversion found here: http://www.cplusplus.com/forum/articles/9645/
+		getline(inf,m_number); //get the magic number
 		stringstream convert(m_number); // stringstream used for the conversion initialized with the contents of the string
 		if ( !(convert >> num) )//give the value to an integer using the characters in the string
 		{
@@ -228,11 +229,11 @@ int Huffman::readHeader()
 		getline(inf,f_name);
 		setFileToCompress(f_name); //Save the original file name so we can write to it later
 		cout << "Original file: " << f_name << endl;
-		get_Line(inf, table, double_delim);
-		get_Line(inf, enc_text, double_delim);
-		enc_len = enc_text.length();
-		bufferHuffman(enc_text);
-		getline(inf, e_o_f);
+		get_Line(inf, table, double_delim); //Get the coding table
+		get_Line(inf, enc_text, double_delim); //get the huffman code
+		enc_len = enc_text.length(); //set the length of the huffman_code for later operations
+		bufferHuffman(enc_text); //write the huffman code to a char* Buffer
+		getline(inf, e_o_f); //get the end of file character
 	}
 	inf.close();
 	return 1;
@@ -242,7 +243,7 @@ void Huffman::writeHeader() // Write the header (including huffman code)
 {
 	unsigned int count = 0;
 	file_to_decompress = setMcpName(file_to_compress);
-	ofstream outf(file_to_decompress.c_str());
+	ofstream outf(file_to_decompress.c_str()); //convert the file extension to .mcp
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << file_to_compress << endl; //Write file name
 	for(unsigned char i=0; i<UCHAR_MAX; i++) 
@@ -253,9 +254,10 @@ void Huffman::writeHeader() // Write the header (including huffman code)
 	outf << DELIM << endl; //Write char table and int with with double delimiter
 	for(unsigned long int i=0;i<enc_len;i++)
 	{
-		outf << huffman_buffer[i]; outf << DELIM << DELIM << endl; //write the huffman code 
+		outf << huffman_buffer[i]; //write the huffman code 
 		count ++;
 	}
+		outf << DELIM << DELIM << endl; //append our double delimiter to it so we know when the string is done
     	outf << O_EOF; //write our "Output" EOF character
 	outf.close(); //close the filestream
 	count += file_to_compress.length();

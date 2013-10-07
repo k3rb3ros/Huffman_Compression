@@ -20,13 +20,17 @@ void Mcp::compress(char* file_name)
 	cout << "Table sorted" << endl;
 	huffman.populate_trie(); //Make and populate the huffman trie
 	cout << "Trie built" << endl;
-	huffman.get_encoding(); //Generate the bitcodes
+	if(!huffman.get_encoding()) //Attempt to generate the bitcodes
+	{
+		 cerr << "Overflow of 64 bit data type unable to generate bitcodes" << endl;
+		return; 
+	}
 	cout << "Bit codes generated"  << endl;
 	cout << "Compressing..." << endl;
 	huffman.compress(); //Compress the contents of the file to bitcode
 	huffman.writeHeader(); //Write the header and compressed message to file
 	cout << "Done!" << endl;
-	cout << "Compression ratio " << huffman.compression_percentage() << endl;
+	cout << "Compression ratio " << huffman.compression_percentage() << "%" << endl;
 
 }
 
@@ -42,11 +46,12 @@ void Mcp::decompress(char* file_name)
 		cout << "Lookup Table populated" << endl;
 		huffman.sortTable();
 		cout << "Lookup Table sorted by ocurrence" << endl;
+		huffman.printSorted();
 		huffman.populate_trie();
 		cout << "Trie built" << endl;
 		huffman.decompress();
-		huffman.printBinary();
 		cout << "File Decompressed" << endl;
+		huffman.printBinary();
 		huffman.print_orig();
 		huffman.writeMessage();
 	}
