@@ -29,7 +29,7 @@ void Mcp::compress(char* file_name)
 	cout << "Compressing..." << endl;
 	huffman.compress(); //Compress the contents of the file to bitcode
 	huffman.writeHeader(); //Write the header and compressed message to file
-	cout << "Done!" << endl;
+	cout << "File Compressed" << endl;
 	cout << "Compression ratio " << huffman.compression_percentage() << "%" << endl;
 
 }
@@ -46,14 +46,11 @@ void Mcp::decompress(char* file_name)
 		cout << "Lookup Table populated" << endl;
 		huffman.sortTable();
 		cout << "Lookup Table sorted by ocurrence" << endl;
-		huffman.printSorted();
 		huffman.populate_trie();
 		cout << "Trie built" << endl;
 		huffman.decompress();
-		cout << "File Decompressed" << endl;
-		huffman.printBinary();
-		huffman.print_orig();
 		huffman.writeMessage();
+		cout << "File Decompressed" << endl;
 	}
 	else cerr << "Invalid .mcp file unable to decompress" << endl;
 }

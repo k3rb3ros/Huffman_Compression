@@ -102,8 +102,7 @@ void CharList::bufferMessage(string fname)
 
 void CharList::bufferHuffman(string &data) //write the get_Line string to the huffman buffer
 {
-	huffman_buffer = new uint8_t[enc_len+1]; //allocate the buffer
-	//cout << "Data buffer " << data << endl;
+	huffman_buffer = new uint8_t[enc_len]; //allocate the buffer
 	for(unsigned int i=0; i<data.length(); i++) huffman_buffer[i] = data[i]; //populated it
 }
 
@@ -137,7 +136,6 @@ void CharList::DecompPopulateTable()//Populate the lookup table from the char, c
 	uint64_t char_count = 0;
 	len = 0;
 	table_len = 0;
-	cout << table << endl;
 	while(!done)
 	{
 		ch = table[i]; //get the character
