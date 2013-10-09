@@ -18,8 +18,8 @@ class Trie: public CharList //Contains all the necessary resources to produce a 
 
 	friend class Huffman;
 	Trie_node* root;
-	Trie_node* insert_node(Trie_node* Root, unsigned char character, uint64_t val);
-	Trie_node* insert_2nodes(Trie_node* Root, unsigned char char1, uint64_t val1, unsigned char char2, uint64_t val2);
+	Trie_node* insert_node(Trie_node* Root, uint8_t character, uint64_t val);
+	Trie_node* insert_2nodes(Trie_node* Root, uint8_t char1, uint64_t val1, uint8_t char2, uint64_t val2);
 	int enc_traverse(Trie_node* Root, short int bit, uint64_t bitcode, unsigned short int length);
 	uint64_t char_count;
 	uint64_t node_count;

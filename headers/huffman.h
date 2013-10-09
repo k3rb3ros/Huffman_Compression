@@ -29,13 +29,13 @@ class Huffman : public Trie //Huffman is a CharList and Trie
 	string encoded_text;
 
 	bool delim_match(string &buffer, const string delim);
-	bool get_chbit(unsigned char* buffer, uint64_t index, unsigned short int offet);
+	bool get_chbit(uint8_t* buffer, uint64_t index, unsigned short int offet);
 	bool get_ulbit(uint64_t* buffer, unsigned short int offset);
 	string getMcpName(string fname);
 	string setMcpName(string file_to_compress);
 	void dump_buffer();
 	uint64_t get_Line(ifstream& inf, string &buffer, const string &delim);
-	void set_chbit(unsigned char* buffer, uint64_t index, unsigned short int offset, bool value);
+	void set_chbit(uint8_t* buffer, uint64_t index, unsigned short int offset, bool value);
 	void set_ulbit(uint64_t* buffer, unsigned short int offset, bool value); 
 
 	public:

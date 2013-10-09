@@ -18,7 +18,7 @@ Trie::Trie() //Constructor inits root node
 	root -> right = NULL;
 }
 
-Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, uint64_t val)
+Trie_node* Trie::insert_node(Trie_node* Root, uint8_t character, uint64_t val)
 {
 	Trie_node* knew_node = NULL;
 	Trie_node* knew_root = NULL;
@@ -50,7 +50,7 @@ Trie_node* Trie::insert_node(Trie_node* Root, unsigned char character, uint64_t 
 	return knew_root; //knew_root;
 }
 
-Trie_node* Trie::insert_2nodes(Trie_node* Root, unsigned char char1, uint64_t val1, unsigned char char2, uint64_t val2)
+Trie_node* Trie::insert_2nodes(Trie_node* Root, uint8_t char1, uint64_t val1, uint8_t char2, uint64_t val2)
 {
 	Trie_node* knew_root = NULL;
 	Trie_node* knew_parent = NULL;
@@ -139,7 +139,7 @@ int Trie::enc_traverse(Trie_node* Root, short int bit, uint64_t bitcode, unsigne
 {
 	bool is_char = false;
 	short int* code_length = NULL;
-	unsigned char ch = 0;
+	uint8_t ch = 0;
 	uint64_t* code = NULL;
 	uint64_t mask = 0x8000000000000000;
 
@@ -204,7 +204,7 @@ void Trie::print_binary(CharNode* Node)
 void Trie::printBinary(){
 	//uint64_t temp = 0;
 	//int len = 0;
-	for(unsigned char i=0;i<UCHAR_MAX;i++)
+	for(uint8_t i=0;i<UCHAR_MAX;i++)
 	{
 		//temp = charTable[i].encoding;
 		//len = charTable[i].encodeLength;
@@ -245,13 +245,13 @@ uint64_t Trie::size_of_trie() //Recursively count the number of nodes i the trie
 void Trie::populate_trie() //Fills the trie data structure with sorted character and character occurences from the sort table
 {
 	bool even = false;
-	unsigned char char1 = 0;
-	unsigned char char2 = 0;
+	uint8_t char1 = 0;
+	uint8_t char2 = 0;
 	uint64_t occur1 = 0;
 	uint64_t occur2 = 0;
 	
 	if(table_len %2 == 0) even = true; 
-	for(unsigned char i=(UCHAR_MAX-table_len); i<UCHAR_MAX; i++) 
+	for(uint8_t i=(UCHAR_MAX-table_len); i<UCHAR_MAX; i++) 
 	{
 		char1 = (((CharNode*) &*(charSort[i]))->character);
 		occur1 = (((CharNode*) &*(charSort[i]))->occurrence);
@@ -288,7 +288,7 @@ int Trie::get_encoding() //Recursively traverse the Trie and write the bitstring
 void Trie::print_encoding_table()
 {
 	cout << endl << "Encoding Table" << endl;
-	for(unsigned char i=0; i<UCHAR_MAX; i++)
+	for(uint8_t i=0; i<UCHAR_MAX; i++)
 	{
 		if(charTable[i].active == true)
 		{
@@ -302,7 +302,7 @@ void Trie::print_encoding_table()
 
 void Trie::print_sort_table() //prints the active characters and their occurence in sorted order
 {
-	for(unsigned char l=0; l<UCHAR_MAX; l++)
+	for(uint8_t l=0; l<UCHAR_MAX; l++)
         {
                 if(((CharNode*) &*(charSort[l]))->occurrence > 0)
                 {

@@ -2,10 +2,10 @@
 #DONE# Write insert into Trie function that inserts sorted characters and their occurences into the Trie:w
 #DONE# Write recursive count function that gets the sumation of the character counts of all the children of a node passed into it
 #DONE# Write an insert two function and use that to insert into the trie except for the last node
-*Maybesuperflous* Modify the encode function so that it can extend beyond the 64 bit limit for long encodings
-* Write an gen_encode function that loops through the buffered message and uses the encode table to write out the encoding to a buffer
-* Write a gen header function that puts all necessary information in a buffer to be written to the file
-* Write an encode function that writes the header and the huffman code to file and renames the file *.mcp
-* Write a decode function that reads the header into ram generates a lookup table and then using a 1 to 1 lookup operation replaces the encoded text with the original text, then writes it to file and then changes the file name back to original
-* Write a get_comp_ratio function that prints out the length of the original and compressed files along with the compression ratio
-* Add functionality for main to take command line arguements (flags) that will dicatate how the program runs
+*TODO* Modify the encode function so that it can extend beyond the 64 bit limit for long encodings
+#DONE# Write an gen_encode function that loops through the buffered message and uses the encode table to write out the encoding to a buffer
+#DONE Write a gen header function that puts all necessary information in a buffer to be written to the file
+#DONE# Write an encode function that writes the header and the huffman code to file and renames the file *.mcp
+#DONE# Write a decode function that reads the header into ram generates a lookup table and then using a 1 to 1 lookup operation replaces the encoded text with the original text, then writes it to file and then changes the file name back to original
+#DONE# Write a get_comp_ratio function that prints out the length of the original and compressed files along with the compression ratio
+#DONE# Add functionality for main to take command line arguements (flags) that will dicatate how the program runs

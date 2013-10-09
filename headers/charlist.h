@@ -15,8 +15,8 @@ class CharList
 {
 	private:	
 	friend class Huffman;
-	unsigned char* message_buffer;
-	unsigned char* huffman_buffer;
+	uint8_t* message_buffer;
+	uint8_t* huffman_buffer;
 	int charOccurrence;
 	string file_to_compress;
 	string file_to_decompress;
@@ -24,14 +24,14 @@ class CharList
 	uint64_t enc_len;
 	uint64_t h_len;
 	void delBuckets(CharBucket* buckets);	
-	void swap(unsigned char* &a, unsigned char* &b);
+	void swap(CharNode* &a, CharNode* &b);
 	
 	protected:
 	short int table_len;
 	string table;
 	
 	CharNode charTable[UCHAR_MAX]; //Create a lookup table for every ascii character		
-	unsigned char* charSort[UCHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
+	CharNode* charSort[UCHAR_MAX]; //Create a sort table pointing to the lookup table so we can have access to sorted values
 	public:
 
 	CharList(); //default constructor

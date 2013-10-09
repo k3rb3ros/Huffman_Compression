@@ -19,7 +19,7 @@ CharList::CharList()
 	enc_len = 0;
 	table_len = 0;
 	table = "";
-	for(unsigned char i=0; i<UCHAR_MAX; i++)
+	for(uint8_t i=0; i<UCHAR_MAX; i++)
 	{
 		charTable[i].active = false;
 		charTable[i].character = i;
@@ -27,7 +27,7 @@ CharList::CharList()
 		charTable[i].encoding = 0;
 		charTable[i].occurrence = 0;
 		charTable[i].buckets = NULL;
-		charSort[i] = (unsigned char*)&charTable[i]; //Initialize charSort to point to every index in charTable
+		charSort[i] = (CharNode*)&charTable[i]; //Initialize charSort to point to every index in charTable
 		//cout << "Addr " << i+1 << " : " << &charSort[i] << ", ";
 	}
 }
@@ -38,7 +38,7 @@ void CharList::sortTable() //bubble sort the values of our lookup table by occur
 	{
 		for(int j=0; j<UCHAR_MAX-1; j++)
 		{
-		if(((CharNode*) (charSort[j]))->occurrence > ((CharNode*) (charSort[j+1]))->occurrence)
+		if((charSort[j])->occurrence > (charSort[j+1])->occurrence)
 			{
 				swap(charSort[j], charSort[j+1]);
 			}
@@ -53,9 +53,9 @@ void CharList::delBuckets(CharBucket* buckets) //recursively delete any buckets 
 	delete buckets; 	
 }
 
-void CharList::swap(unsigned char* &a, unsigned char* &b)
+void CharList::swap(CharNode* &a, CharNode* &b)
 {
-	unsigned char* temp = NULL;
+	CharNode* temp = NULL;
 	temp = a;
 	a = b;
 	b = temp;
@@ -72,15 +72,14 @@ void CharList::bufferMessage(string fname)
 	{
 		in.seekg(0, in.end); //Go to end of stream
 		len = in.tellg(); //Get the length of the file
-		message_buffer = new unsigned char[len+1];
+		message_buffer = new uint8_t[len];
 		message_buffer[len] = 0; //null terminate the string
 		in.seekg(0, in.beg); //Reset stream to beginning
 		in >> noskipws; //tell fstream not to ignore whitespace
 			
 		while(i!=len)
 		{
-			in >> message_buffer[i];
-			i++;
+			in >> message_buffer[i++];
 		}			
 	
 		if(in) cout << file_to_compress << " buffered succesfully\n";
@@ -103,14 +102,14 @@ void CharList::bufferMessage(string fname)
 
 void CharList::bufferHuffman(string &data) //write the get_Line string to the huffman buffer
 {
-	huffman_buffer = new unsigned char[enc_len+1]; //allocate the buffer
+	huffman_buffer = new uint8_t[enc_len+1]; //allocate the buffer
 	//cout << "Data buffer " << data << endl;
 	for(unsigned int i=0; i<data.length(); i++) huffman_buffer[i] = data[i]; //populated it
 }
 
 void CharList::CompPopulateTable()
 {
-	unsigned char ch = 0;
+	uint8_t ch = 0;
 	if(message_buffer != NULL)
 	{
 		for(unsigned int i=0; i<len; i++)
@@ -134,7 +133,7 @@ void CharList::DecompPopulateTable()//Populate the lookup table from the char, c
 	short int delim = 0;
 	short unsigned int i = 0;
 	string temp_count = "";
-	unsigned char ch = 0;
+	uint8_t ch = 0;
 	uint64_t char_count = 0;
 	len = 0;
 	table_len = 0;
@@ -184,7 +183,7 @@ void CharList::printSorted()
 void CharList::showCharCount()
 {
 	cout << "Character Occurance Table:" << endl;
-	for(unsigned char i=0; i<UCHAR_MAX; i++)
+	for(uint8_t i=0; i<UCHAR_MAX; i++)
 	{
 		if(charTable[i].active == true)
 		{

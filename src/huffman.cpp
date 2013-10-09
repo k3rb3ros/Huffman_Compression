@@ -29,10 +29,10 @@ bool Huffman::delim_match(string &buffer, const string delim)
 	return false;
 }
 
-bool Huffman::get_chbit(unsigned char* buffer, uint64_t index, unsigned short int offset)
+bool Huffman::get_chbit(uint8_t* buffer, uint64_t index, unsigned short int offset)
 {
 	uint64_t mask = 0;
-	mask = (0x80 >> offset % (sizeof(unsigned char)*8)); //set the mask to the nth bit from the left side
+	mask = (0x80 >> offset % (sizeof(uint8_t)*8)); //set the mask to the nth bit from the left side
 	return (buffer[index] & mask) != 0; //if the buffer bitwise anded with the mask = return true (1) otherwise its a zero
 }
 
@@ -68,11 +68,11 @@ uint64_t Huffman::get_Line(ifstream& inf, string &buffer , const string &delim)
 }
 
 /* Created with the help of Dr. MacEvoy */
-void Huffman::set_chbit(unsigned char* buffer, uint64_t index, unsigned short int offset, bool value) 
+void Huffman::set_chbit(uint8_t* buffer, uint64_t index, unsigned short int offset, bool value) 
 {
-	unsigned char mask = 0;
+	uint8_t mask = 0;
 	//we want this function to be able to overflow since it carries over to the next byte
-	mask = (0x80 >> (offset % (sizeof(unsigned char)*8)));
+	mask = (0x80 >> (offset % (sizeof(uint8_t)*8)));
 	if(value) buffer[index] |= mask;
 }
 
@@ -99,13 +99,13 @@ string Huffman::getMcpName(string fname)
 
 void Huffman::compress() //compress the original message
 {
-	unsigned char ch = 0;
+	uint8_t ch = 0;
 	int code_length = 0;
 	uint64_t* bit_code = NULL;
 	uint64_t bit_count = 0;
 	uint64_t index = 0;
 	
-	huffman_buffer = new unsigned char[H_BUF];//allocate the buffer
+	huffman_buffer = new uint8_t[H_BUF];//allocate the buffer
 	for(uint64_t k=0; k<H_BUF; k++) huffman_buffer[k] = 0;
 	for(uint64_t i=0; i<len; i++)
 	{	
@@ -127,7 +127,7 @@ void Huffman::compress() //compress the original message
 void Huffman::decompress() //decompress our Huffman encoded message
 {
 	Trie_node* Test = NULL;
-	unsigned char ch = 0;
+	uint8_t ch = 0;
 	uint64_t bit_count = 0;
 	uint64_t index = 0;
 	unsigned short int length = 0;
@@ -139,7 +139,7 @@ void Huffman::decompress() //decompress our Huffman encoded message
 	}
 	if(message_buffer != NULL) delete[] message_buffer; //free anything in the buffer if it is already populated
 	
-	message_buffer = new unsigned char[len+1]; //allocate the buffer
+	message_buffer = new uint8_t[len+1]; //allocate the buffer
 	for(uint64_t k=0; k<len; k++) message_buffer[k] = 0; //zero fill the buffer
 	
 	for(uint64_t i=0; i<len; i++) //fill every character in the message buffer after it has been decoded
@@ -236,7 +236,7 @@ void Huffman::writeHeader() // Write the header (including huffman code)
 	ofstream outf(file_to_decompress.c_str()); //convert the file extension to .mcp
 	outf << MAGIC_NUMBER << endl; //write magic number
 	outf << file_to_compress << endl; //Write file name
-	for(unsigned char i=0; i<UCHAR_MAX; i++) 
+	for(uint8_t i=0; i<UCHAR_MAX; i++) 
 	{
 		if(charTable[i].active) outf << charTable[i].character << charTable[i].occurrence << DELIM; //Write the active characters and their counts
 		count ++;
@@ -277,7 +277,7 @@ void Huffman::print_orig()
 	{
 		cout << message_buffer[i];
 	}
-	cout << "\n########END UNCOMPRESSED BUFFER " << enc_len << " characters########\n";
+	cout << "\n########END UNCOMPRESSED BUFFER " << len << " characters########\n";
 }
 
 void Huffman::print_huffman()

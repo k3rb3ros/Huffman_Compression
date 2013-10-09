@@ -17,7 +17,7 @@ struct CharBucket
 struct CharNode //Structure used for CharTable will be shared with Trie class
 {
 	bool active;
-	unsigned char character;	
+	uint8_t character;	
 	CharBucket* buckets;
 	short int encodeLength;	
 	uint64_t encoding;
@@ -27,7 +27,7 @@ struct CharNode //Structure used for CharTable will be shared with Trie class
 struct Trie_node //Trie node struct used to create Huffman encoding
 {
 	bool is_character;	
-	unsigned char character;
+	uint8_t character;
 	uint64_t val;
 	Trie_node* left;
 	Trie_node* right;
