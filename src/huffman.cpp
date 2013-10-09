@@ -76,7 +76,7 @@ void Huffman::set_chbit(uint8_t* buffer, uint64_t index, unsigned short int offs
 	if(value) buffer[index] |= mask;
 }
 
-void Huffman::set_ulbit(unsigned long* buffer, unsigned short int offset, bool value)
+void Huffman::set_ulbit(uint64_t* buffer, unsigned short int offset, bool value)
 {
 	uint64_t mask = 0;
 	if(offset >= sizeof(uint64_t)*8) return;
@@ -170,7 +170,7 @@ void Huffman::decompress() //decompress our Huffman encoded message
 
 double Huffman::compression_percentage()
 {
-	return (((double)h_len / (double)len) * 100); 
+	return 100-(((double)h_len / (double)len) * 100); 
 }
 
 string Huffman::setMcpName(string fname)
